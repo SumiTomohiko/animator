@@ -5,20 +5,49 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import android.app.Activity;
+import android.content.Context;
 import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.Environment;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View.OnClickListener;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.Toast;
 
+import com.devsmart.android.ui.HorizontalListView;
+
 public class MainActivity extends Activity {
+
+    private class Adapter extends BaseAdapter {
+
+        public int getCount() {
+            return mFrames.size();
+        }
+
+		public View getView(int position, View convertView, ViewGroup parent) {
+            String service = Context.LAYOUT_INFLATER_SERVICE;
+            LayoutInflater inflater = (LayoutInflater)getSystemService(service);
+            return inflater.inflate(R.layout.list_item, parent, false);
+        }
+
+        public long getItemId(int position) {
+            return position;
+        }
+
+        public Object getItem(int position) {
+            return mFrames.get(position);
+        }
+    }
 
     private class JpegCallback implements PictureCallback {
 
@@ -36,6 +65,7 @@ public class MainActivity extends Activity {
                     finally {
                         out.close();
                     }
+                    mFrames.add(file.getName());
                 }
                 catch (IOException e) {
                     showException("failed to write JPEG data", e);
@@ -75,9 +105,15 @@ public class MainActivity extends Activity {
         }
     }
 
-    private Camera mCamera;
-    private PictureCallback mJpegCallback;
+    // Document
+    private List<String> mFrames = new ArrayList<String>();
+
+    // View
     private SurfaceView mView;
+
+    // Helper
+    private Camera mCamera;
+    private PictureCallback mJpegCallback = new JpegCallback();
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -93,13 +129,14 @@ public class MainActivity extends Activity {
 
         View shotButton = findViewById(R.id.shot_button);
         shotButton.setOnClickListener(new ShotButtonOnClickListener());
+        HorizontalListView list = (HorizontalListView)findViewById(R.id.list);
+        list.setAdapter(new Adapter());
 
         mView = (SurfaceView)findViewById(R.id.preview);
         SurfaceHolder holder = mView.getHolder();
         holder.addCallback(new HolderListener());
         holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
         mCamera = Camera.open();
-        mJpegCallback = new JpegCallback();
     }
 
     protected void onPause() {

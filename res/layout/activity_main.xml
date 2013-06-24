@@ -18,6 +18,10 @@
             android:layout_height="fill_parent"
             android:src="@android:drawable/ic_menu_camera"/>
     </LinearLayout>
+    <com.devsmart.android.ui.HorizontalListView
+        android:id="@+id/list"
+        android:layout_width="fill_parent"
+        android:layout_height="240dip"/>
 </LinearLayout>
 <!--
 vim: tabstop=4 shiftwidth=4 expandtab softtabstop=4

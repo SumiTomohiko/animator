@@ -1,5 +1,6 @@
 .settings
 bin
+com.devsmart.android.ui
 gen
 jp.gr.java_conf.neko_daisuki.android.animator
 local.properties
