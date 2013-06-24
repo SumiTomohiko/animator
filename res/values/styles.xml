@@ -1,5 +1,4 @@
 <resources>
-
     <!--
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
@@ -22,3 +21,6 @@
         <item name="android:background">#f4a0bd</item>
     </style>
 </resources>
+<!--
+vim: tabstop=4 shiftwidth=4 expandtab softtabstop=4
+-->
