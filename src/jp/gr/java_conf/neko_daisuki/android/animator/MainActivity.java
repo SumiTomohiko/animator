@@ -52,9 +52,7 @@ public class MainActivity extends Activity {
     private class JpegCallback implements PictureCallback {
 
         public void onPictureTaken(byte[] data, Camera camera) {
-            File file = new File(
-                    Environment.getExternalStorageDirectory(),
-                    "animator.jpg");
+            File file = new File(mProjectDirectory, "animator.jpg");
             OutputStream out;
             try {
                 out = new FileOutputStream(file);
@@ -106,6 +104,7 @@ public class MainActivity extends Activity {
     }
 
     // Document
+    private String mProjectDirectory;
     private List<String> mFrames = new ArrayList<String>();
 
     // View
@@ -137,6 +136,12 @@ public class MainActivity extends Activity {
         holder.addCallback(new HolderListener());
         holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
         mCamera = Camera.open();
+
+        File parentDirectory = Environment.getExternalStorageDirectory();
+        String absoluteParentDirectory = parentDirectory.getAbsolutePath();
+        String fmt = "%s/.animator/default";
+        mProjectDirectory = String.format(fmt, absoluteParentDirectory);
+        new File(mProjectDirectory).mkdirs();
     }
 
     protected void onPause() {
