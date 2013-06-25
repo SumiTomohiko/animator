@@ -5,7 +5,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -55,26 +58,30 @@ public class MainActivity extends Activity {
 
     private class JpegCallback implements PictureCallback {
 
+        private DateFormat mDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+
         public void onPictureTaken(byte[] data, Camera camera) {
-            File file = new File(mProjectDirectory, "animator.jpg");
-            OutputStream out;
+            String fileId = mDateFormat.format(new Date());
+
+            String originalPath = getOriginalFilePath(fileId);
             try {
-                out = new FileOutputStream(file);
-                try {
-                    try {
-                        out.write(data);
-                    }
-                    finally {
-                        out.close();
-                    }
-                    mFrames.add(file.getName());
-                }
-                catch (IOException e) {
-                    showException("failed to write JPEG data", e);
-                }
+                saveFile(originalPath, data);
             }
-            catch (FileNotFoundException e) {
-                showException("failed to open a file", e);
+            catch (IOException e) {
+                showException("failed to save", e);
+                return;
+            }
+
+            mFrames.add(fileId);
+        }
+
+        private void saveFile(String path, byte[] data) throws IOException {
+            OutputStream out = new FileOutputStream(path);
+            try {
+                out.write(data);
+            }
+            finally {
+                out.close();
             }
         }
     }
@@ -222,6 +229,10 @@ public class MainActivity extends Activity {
         e.printStackTrace();
         String s = String.format("%s: %s", msg, e.getMessage());
         Toast.makeText(this, s, Toast.LENGTH_LONG);
+    }
+
+    private String getOriginalFilePath(String id) {
+        return String.format("%s/%s-original.jpg", mProjectDirectory, id);
     }
 }
 
