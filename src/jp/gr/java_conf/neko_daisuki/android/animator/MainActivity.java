@@ -14,6 +14,9 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap.CompressFormat;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.hardware.Camera.Parameters;
 import android.hardware.Camera.PictureCallback;
@@ -66,6 +69,17 @@ public class MainActivity extends Activity {
             String originalPath = getOriginalFilePath(fileId);
             try {
                 saveFile(originalPath, data);
+
+                Bitmap bmp = BitmapFactory.decodeFile(originalPath);
+                Bitmap thumb = Bitmap.createScaledBitmap(bmp, 320, 240, false);
+                String thumbPath = getThumbnailFilePath(fileId);
+                OutputStream out = new FileOutputStream(thumbPath);
+                try {
+                    thumb.compress(CompressFormat.JPEG, 100, out);
+                }
+                finally {
+                    out.close();
+                }
             }
             catch (IOException e) {
                 showException("failed to save", e);
@@ -229,6 +243,10 @@ public class MainActivity extends Activity {
         e.printStackTrace();
         String s = String.format("%s: %s", msg, e.getMessage());
         Toast.makeText(this, s, Toast.LENGTH_LONG);
+    }
+
+    private String getThumbnailFilePath(String id) {
+        return String.format("%s/%s-thumbnail.jpg", mProjectDirectory, id);
     }
 
     private String getOriginalFilePath(String id) {
