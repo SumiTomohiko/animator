@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -176,21 +177,13 @@ public class MainActivity extends Activity {
         }
 
         private List<Camera.Size> dropTooLargePreviewSizes(int width, int height, List<Camera.Size> sizes) {
-            String fmt = "preview size of width=%d, heigh=%d is %s.";
-
             List<Camera.Size> l = new LinkedList<Camera.Size>();
             for (Camera.Size size: sizes) {
-                if ((width < size.width) || (height < size.height)) {
-                    String msg = String.format(
-                            fmt, size.width, size.height, "too large");
-                    Log.d(TAG, msg);
-                    continue;
-                }
-                String msg = String.format(
-                        fmt, size.width, size.height, "enough small");
-                Log.d(TAG, msg);
-
-                l.add(size);
+                Camera.Size[] a =
+                    (width < size.width) || (height < size.height)
+                    ? new Camera.Size[0]
+                    : new Camera.Size[] { size };
+                l.addAll(Arrays.asList(a));
             }
 
             return l;
