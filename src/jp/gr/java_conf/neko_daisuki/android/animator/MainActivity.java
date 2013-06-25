@@ -32,6 +32,7 @@ import android.view.View.OnClickListener;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.devsmart.android.ui.HorizontalListView;
@@ -47,7 +48,13 @@ public class MainActivity extends Activity {
 		public View getView(int position, View convertView, ViewGroup parent) {
             String service = Context.LAYOUT_INFLATER_SERVICE;
             LayoutInflater inflater = (LayoutInflater)getSystemService(service);
-            return inflater.inflate(R.layout.list_item, parent, false);
+            View view = inflater.inflate(R.layout.list_item, parent, false);
+
+            ImageView img = (ImageView)view.findViewById(R.id.image);
+            String path = getThumbnailFilePath(mFrames.get(position));
+            img.setImageBitmap(BitmapFactory.decodeFile(path));
+
+            return view;
         }
 
         public long getItemId(int position) {
