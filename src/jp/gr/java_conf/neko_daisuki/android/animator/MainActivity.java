@@ -77,16 +77,8 @@ public class MainActivity extends Activity {
             try {
                 saveFile(originalPath, data);
 
-                Bitmap bmp = BitmapFactory.decodeFile(originalPath);
-                Bitmap thumb = Bitmap.createScaledBitmap(bmp, 320, 240, false);
-                String thumbPath = getThumbnailFilePath(fileId);
-                OutputStream out = new FileOutputStream(thumbPath);
-                try {
-                    thumb.compress(CompressFormat.JPEG, 100, out);
-                }
-                finally {
-                    out.close();
-                }
+                String thumbnailPath = getThumbnailFilePath(fileId);
+                saveThumbnail(originalPath, thumbnailPath);
             }
             catch (IOException e) {
                 showException("failed to save", e);
@@ -94,6 +86,18 @@ public class MainActivity extends Activity {
             }
 
             mFrames.add(fileId);
+        }
+
+        private void saveThumbnail(String originalPath, String thumbnailPath) throws IOException {
+            Bitmap bmp = BitmapFactory.decodeFile(originalPath);
+            Bitmap thumb = Bitmap.createScaledBitmap(bmp, 320, 240, false);
+            OutputStream out = new FileOutputStream(thumbnailPath);
+            try {
+                thumb.compress(CompressFormat.JPEG, 100, out);
+            }
+            finally {
+                out.close();
+            }
         }
 
         private void saveFile(String path, byte[] data) throws IOException {
