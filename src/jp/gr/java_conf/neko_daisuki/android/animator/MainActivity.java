@@ -158,14 +158,17 @@ public class MainActivity extends Activity {
 
         private Camera.Size findBestPreviewSize(int width, int height, List<Camera.Size> sizes) {
             List<Camera.Size> candidates = dropTooLargePreviewSizes(width, height, sizes);
-            if (candidates.size() == 0) {
-                return sizes.get(0);
-            }
-            Camera.Size largestSize = candidates.get(0);
+            return candidates.size() == 0
+                ? sizes.get(0)
+                : findLargestSize(candidates);
+        }
+
+        private Camera.Size findLargestSize(List<Camera.Size> sizes) {
+            Camera.Size largestSize = sizes.get(0);
             int largestArea = largestSize.width * largestSize.height;
-            int len = candidates.size();
+            int len = sizes.size();
             for (int i = 1; i < len; i++) {
-                Camera.Size size = candidates.get(i);
+                Camera.Size size = sizes.get(i);
                 int area = size.width * size.height;
                 boolean isSmall = area < largestArea;
                 largestSize = isSmall ? largestSize : size;
