@@ -167,11 +167,9 @@ public class MainActivity extends Activity {
             for (int i = 1; i < len; i++) {
                 Camera.Size size = candidates.get(i);
                 int area = size.width * size.height;
-                if (area < largestArea) {
-                    continue;
-                }
-                largestSize = size;
-                largestArea = area;
+                boolean isSmall = area < largestArea;
+                largestSize = isSmall ? largestSize : size;
+                largestArea = isSmall ? largestArea : area;
             }
             return largestSize;
         }
