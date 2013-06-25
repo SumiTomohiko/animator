@@ -10,9 +10,8 @@
         android:layout_weight="1">
         <SurfaceView
             android:id="@+id/preview"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="1"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
         <ImageButton
             android:id="@+id/shot_button"
             android:layout_width="wrap_content"
