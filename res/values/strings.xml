@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">animator</string>
     <string name="action_make_movie">Make movie</string>
     <string name="hello_world">Hello world!</string>
-
 </resources>
+<!--
+vim: tabstop=4 shiftwidth=4 expandtab softtabstop=4
+-->
