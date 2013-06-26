@@ -390,8 +390,7 @@ public class MainActivity extends Activity {
             args.add("-i");
             args.add(getOriginalFilePath(id));
         }
-        File directory = Environment.getExternalStorageDirectory();
-        args.add(String.format("%s/foo.avi", directory.getAbsolutePath()));
+        args.add(String.format("%s/movie.avi", mProjectDirectory));
 
         return args.toArray(new String[0]);
     }
