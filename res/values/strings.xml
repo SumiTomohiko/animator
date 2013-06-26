@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">animator</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_make_movie">Make movie</string>
     <string name="hello_world">Hello world!</string>
 
 </resources>

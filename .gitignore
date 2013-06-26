@@ -3,4 +3,5 @@ bin
 com.devsmart.android.ui
 gen
 jp.gr.java_conf.neko_daisuki.android.animator
+jp.gr.java_conf.neko_daisuki.android.nexec.client
 local.properties

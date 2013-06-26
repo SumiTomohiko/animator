@@ -10,11 +10,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -27,6 +30,7 @@ import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View.OnClickListener;
@@ -37,8 +41,93 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.devsmart.android.ui.HorizontalListView;
+import jp.gr.java_conf.neko_daisuki.android.nexec.client.NexecClient;
 
 public class MainActivity extends Activity {
+
+    private class OnFinishListener implements NexecClient.OnFinishListener {
+
+        public void onFinish() {
+            showToast("Finished.");
+        }
+    }
+
+    private class OnGetLineListener implements NexecClient.OnGetLineListener {
+
+        public void onGetLine(String s) {
+            showToast(s.trim());
+        }
+    }
+
+    private static class ActivityResultDispatcher {
+
+        public interface Proc {
+
+            public void run(Intent data);
+        }
+
+        private static class FakeProc implements Proc {
+
+            public void run(Intent data) {
+            }
+        }
+
+        private static class ActivityResult {
+
+            public int requestCode;
+            public int resultCode;
+
+            public ActivityResult(int requestCode, int resultCode) {
+                this.requestCode = requestCode;
+                this.resultCode = resultCode;
+            }
+
+            public boolean equals(Object o) {
+                ActivityResult result;
+                try {
+                    result = (ActivityResult)o;
+                }
+                catch (ClassCastException e) {
+                    return false;
+                }
+                return (result.requestCode == this.requestCode)
+                    && (result.resultCode == this.resultCode);
+            }
+
+            public int hashCode() {
+                Integer n = Integer.valueOf(requestCode);
+                Integer m = Integer.valueOf(resultCode);
+                return n.hashCode() + m.hashCode();
+            }
+        }
+
+        private static Proc mFakeProc = new FakeProc();
+        private Map<ActivityResult, Proc> mMap;
+
+        public ActivityResultDispatcher() {
+            mMap = new HashMap<ActivityResult, Proc>();
+        }
+
+        public void put(int requestCode, int resultCode, Proc proc) {
+            mMap.put(new ActivityResult(requestCode, resultCode), proc);
+        }
+
+        public void dispatch(int requestCode, int resultCode, Intent data) {
+            getProc(requestCode, resultCode).run(data);
+        }
+
+        private Proc getProc(int requestCode, int resultCode) {
+            Proc proc = mMap.get(new ActivityResult(requestCode, resultCode));
+            return proc != null ? proc : mFakeProc;
+        }
+    }
+
+    private class OnConfirmOk implements ActivityResultDispatcher.Proc {
+
+        public void run(Intent data) {
+            mNexecClient.execute(data);
+        }
+    }
 
     private class Adapter extends BaseAdapter {
 
@@ -192,6 +281,7 @@ public class MainActivity extends Activity {
     }
 
     private static final String TAG = "animator";
+    private static final int REQUEST_CONFIRM = 0;
 
     // Document
     private String mProjectDirectory;
@@ -203,11 +293,22 @@ public class MainActivity extends Activity {
     // Helper
     private Camera mCamera;
     private PictureCallback mJpegCallback = new JpegCallback();
+    private NexecClient mNexecClient;
+    private ActivityResultDispatcher mActivityResultDispatcher;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        NexecClient.Settings settings = new NexecClient.Settings();
+        settings.host = "192.168.11.8";
+        settings.port = 57005;
+        settings.args = buildArgs();
+        mNexecClient.request(settings, REQUEST_CONFIRM);
         return true;
     }
 
@@ -227,11 +328,25 @@ public class MainActivity extends Activity {
         holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
         mCamera = Camera.open();
 
+        mNexecClient = new NexecClient(this);
+        OnGetLineListener outListener = new OnGetLineListener();
+        mNexecClient.setStdoutOnGetLineListener(outListener);
+        mNexecClient.setStderrOnGetLineListener(outListener);
+        mNexecClient.setOnFinishListener(new OnFinishListener());
+
+        mActivityResultDispatcher = new ActivityResultDispatcher();
+        mActivityResultDispatcher.put(
+                REQUEST_CONFIRM, RESULT_OK, new OnConfirmOk());
+
         File parentDirectory = Environment.getExternalStorageDirectory();
         String absoluteParentDirectory = parentDirectory.getAbsolutePath();
         String fmt = "%s/.animator/default";
         mProjectDirectory = String.format(fmt, absoluteParentDirectory);
         new File(mProjectDirectory).mkdirs();
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        mActivityResultDispatcher.dispatch(requestCode, resultCode, data);
     }
 
     protected void onPause() {
@@ -246,8 +361,11 @@ public class MainActivity extends Activity {
 
     private void showException(String msg, Throwable e) {
         e.printStackTrace();
-        String s = String.format("%s: %s", msg, e.getMessage());
-        Toast.makeText(this, s, Toast.LENGTH_LONG);
+        showToast(String.format("%s: %s", msg, e.getMessage()));
+    }
+
+    private void showToast(String msg) {
+        Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
     }
 
     private String getThumbnailFilePath(String id) {
@@ -256,6 +374,26 @@ public class MainActivity extends Activity {
 
     private String getOriginalFilePath(String id) {
         return String.format("%s/%s-original.jpg", mProjectDirectory, id);
+    }
+
+    private String[] buildArgs() {
+        List<String> args = new LinkedList<String>();
+        args.add("/usr/local/bin/ffmpeg");
+        args.add("-loglevel");
+        args.add("quiet");
+        args.add("-y");
+        args.add("-r");
+        args.add("1");
+        args.add("-f");
+        args.add("image2");
+        for (String id: mFrames) {
+            args.add("-i");
+            args.add(getOriginalFilePath(id));
+        }
+        File directory = Environment.getExternalStorageDirectory();
+        args.add(String.format("%s/foo.avi", directory.getAbsolutePath()));
+
+        return args.toArray(new String[0]);
     }
 }
 
