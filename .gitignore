@@ -2,6 +2,12 @@
 bin
 com.devsmart.android.ui
 gen
+ic_launcher-web.png
 jp.gr.java_conf.neko_daisuki.android.animator
 jp.gr.java_conf.neko_daisuki.android.nexec.client
 local.properties
+res/drawable-hdpi/ic_launcher.png
+res/drawable-ldpi/ic_launcher.png
+res/drawable-mdpi/ic_launcher.png
+res/drawable-xhdpi/ic_launcher.png
+res/drawable-xxhdpi/ic_launcher.png
