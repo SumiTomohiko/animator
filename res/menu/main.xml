@@ -3,6 +3,12 @@
         android:id="@+id/action_make_movie"
         android:title="@string/action_make_movie"/>
     <item
+        android:id="@+id/action_create_project"
+        android:title="@string/action_create_project"/>
+    <item
+        android:id="@+id/action_rename_project"
+        android:title="@string/action_rename_project"/>
+    <item
         android:id="@+id/action_clear_project"
         android:title="@string/action_clear_project"/>
 </menu>

@@ -16,7 +16,10 @@ import java.util.List;
 import java.util.Map;
 
 import android.app.Activity;
+import android.app.AlertDialog.Builder;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.Bitmap;
@@ -38,6 +41,7 @@ import android.view.View.OnClickListener;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -46,9 +50,93 @@ import jp.gr.java_conf.neko_daisuki.android.nexec.client.NexecClient;
 
 public class MainActivity extends Activity {
 
+    private class RenameProjectDialogOkButtonOnClickListener implements DialogInterface.OnClickListener {
+
+        public void onClick(DialogInterface dialog, int id) {
+            File src = new File(mProjectDirectory);
+            String name = mRenameProjectDialogViews.text.getText().toString();
+            String path = getProjectDirectory(name);
+            src.renameTo(new File(path));
+            mProjectDirectory = path;
+        }
+    }
+
+    private class CreateProjectDialogOkButtonOnClickListener implements DialogInterface.OnClickListener {
+
+        public void onClick(DialogInterface dialog, int id) {
+            String name = mCreateProjectDialogViews.text.getText().toString();
+            changeToNewProject(name);
+        }
+    }
+
+    private class DialogCancelButtonOnClickListener implements DialogInterface.OnClickListener {
+
+        public void onClick(DialogInterface dialog, int id) {
+            // Does nothing.
+        }
+    }
+
+    private interface DialogCreator {
+
+        public Dialog create();
+    }
+
+    private abstract class ProjectNameDialogCreator implements DialogCreator {
+
+        public Dialog create() {
+            Builder builder = new Builder(MainActivity.this);
+            builder.setView(getView());
+            builder.setPositiveButton("Okey", getOnClickListener());
+            builder.setNegativeButton(
+                    "Cancel", new DialogCancelButtonOnClickListener());
+            return builder.create();
+        }
+
+        protected abstract View getView();
+        protected abstract DialogInterface.OnClickListener getOnClickListener();
+    }
+
+    private class CreateProjectDialogCreator extends ProjectNameDialogCreator {
+
+        protected View getView() {
+            return mCreateProjectDialogViews.dialog;
+        }
+
+        protected DialogInterface.OnClickListener getOnClickListener() {
+            return new CreateProjectDialogOkButtonOnClickListener();
+        }
+    }
+
+    private class RenameProjectDialogCreator extends ProjectNameDialogCreator {
+
+        protected View getView() {
+            return mRenameProjectDialogViews.dialog;
+        }
+
+        protected DialogInterface.OnClickListener getOnClickListener() {
+            return new RenameProjectDialogOkButtonOnClickListener();
+        }
+    }
+
     private interface MenuAction {
 
         public void run();
+    }
+
+    private class RenameProjectAction implements MenuAction {
+
+        public void run() {
+            EditText text = mRenameProjectDialogViews.text;
+            text.setText(new File(mProjectDirectory).getName());
+            showDialog(DIALOG_RENAME_PROJECT);
+        }
+    }
+
+    private class CreateProjectAction implements MenuAction {
+
+        public void run() {
+            showDialog(DIALOG_CREATE_PROJECT);
+        }
     }
 
     private class ClearProjectAction implements MenuAction {
@@ -308,8 +396,16 @@ public class MainActivity extends Activity {
         }
     }
 
+    private static class ProjectNameDialogViews {
+
+        public View dialog;
+        public EditText text;
+    }
+
     private static final String TAG = "animator";
     private static final int REQUEST_CONFIRM = 0;
+    private static final int DIALOG_CREATE_PROJECT = 0;
+    private static final int DIALOG_RENAME_PROJECT = 1;
 
     // Document
     private String mProjectDirectory;
@@ -317,6 +413,8 @@ public class MainActivity extends Activity {
 
     // View
     private SurfaceView mView;
+    private ProjectNameDialogViews mCreateProjectDialogViews;
+    private ProjectNameDialogViews mRenameProjectDialogViews;
 
     // Helper
     private Camera mCamera;
@@ -324,6 +422,7 @@ public class MainActivity extends Activity {
     private NexecClient mNexecClient;
     private ActivityResultDispatcher mActivityResultDispatcher;
     private SparseArray<MenuAction> mMenuActions;
+    private SparseArray<DialogCreator> mDialogCreators;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -335,6 +434,10 @@ public class MainActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         mMenuActions.get(item.getItemId()).run();
         return true;
+    }
+
+    protected Dialog onCreateDialog(int id) {
+        return mDialogCreators.get(id).create();
     }
 
     @Override
@@ -359,15 +462,22 @@ public class MainActivity extends Activity {
         mActivityResultDispatcher.put(
                 REQUEST_CONFIRM, RESULT_OK, new OnConfirmOk());
 
-        File parentDirectory = Environment.getExternalStorageDirectory();
-        String absoluteParentDirectory = parentDirectory.getAbsolutePath();
-        String fmt = "%s/.animator/default";
-        mProjectDirectory = String.format(fmt, absoluteParentDirectory);
-        new File(mProjectDirectory).mkdirs();
-
         mMenuActions = new SparseArray<MenuAction>();
+        mMenuActions.put(R.id.action_create_project, new CreateProjectAction());
+        mMenuActions.put(R.id.action_rename_project, new RenameProjectAction());
         mMenuActions.put(R.id.action_clear_project, new ClearProjectAction());
         mMenuActions.put(R.id.action_make_movie, new MakeMovieAction());
+
+        mDialogCreators = new SparseArray<DialogCreator>();
+        mDialogCreators.put(
+                DIALOG_CREATE_PROJECT, new CreateProjectDialogCreator());
+        mDialogCreators.put(
+                DIALOG_RENAME_PROJECT, new RenameProjectDialogCreator());
+
+        mCreateProjectDialogViews = createProjectNameDialog();
+        mRenameProjectDialogViews = createProjectNameDialog();
+
+        changeToNewProject("default");
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -442,6 +552,31 @@ public class MainActivity extends Activity {
         args.add(getDestinationPath());
 
         return args.toArray(new String[0]);
+    }
+
+    private View inflateProjectNameDialog() {
+        return getLayoutInflater().inflate(R.layout.dialog_project_name, null);
+    }
+
+    private ProjectNameDialogViews createProjectNameDialog() {
+        ProjectNameDialogViews views = new ProjectNameDialogViews();
+
+        views.dialog = inflateProjectNameDialog();
+        views.text = (EditText)views.dialog.findViewById(R.id.name);
+
+        return views;
+    }
+
+    private String getProjectDirectory(String name) {
+        File parentDirectory = Environment.getExternalStorageDirectory();
+        String absoluteParentDirectory = parentDirectory.getAbsolutePath();
+        String fmt = "%s/.animator/%s";
+        return String.format(fmt, absoluteParentDirectory, name);
+    }
+
+    private void changeToNewProject(String name) {
+        mProjectDirectory = getProjectDirectory(name);
+        new File(mProjectDirectory).mkdirs();
     }
 }
 
