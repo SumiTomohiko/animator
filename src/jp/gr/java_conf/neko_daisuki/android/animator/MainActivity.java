@@ -380,7 +380,7 @@ public class MainActivity extends Activity {
     }
 
     private String getDestinationPath() {
-        return String.format("%s/movie.avi", mProjectDirectory);
+        return String.format("%s/movie.mp4", mProjectDirectory);
     }
 
     private String[] listFiles() {
@@ -409,6 +409,8 @@ public class MainActivity extends Activity {
             args.add("-i");
             args.add(getOriginalFilePath(id));
         }
+        args.add("-s");
+        args.add("xga");
         args.add(getDestinationPath());
 
         return args.toArray(new String[0]);
