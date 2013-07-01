@@ -308,6 +308,7 @@ public class MainActivity extends Activity {
         settings.host = "192.168.11.8";
         settings.port = 57005;
         settings.args = buildArgs();
+        settings.files = listFiles();
         mNexecClient.request(settings, REQUEST_CONFIRM);
         return true;
     }
@@ -376,8 +377,24 @@ public class MainActivity extends Activity {
         return String.format("%s/%s-original.jpg", mProjectDirectory, id);
     }
 
+    private String getDestinationPath() {
+        return String.format("%s/movie.avi", mProjectDirectory);
+    }
+
+    private String[] listFiles() {
+        List<String> files = new LinkedList<String>();
+
+        for (String id: mFrames) {
+            files.add(getOriginalFilePath(id));
+        }
+        files.add(getDestinationPath());
+
+        return files.toArray(new String[0]);
+    }
+
     private String[] buildArgs() {
         List<String> args = new LinkedList<String>();
+
         args.add("ffmpeg");
         args.add("-loglevel");
         args.add("quiet");
@@ -390,7 +407,7 @@ public class MainActivity extends Activity {
             args.add("-i");
             args.add(getOriginalFilePath(id));
         }
-        args.add(String.format("%s/movie.avi", mProjectDirectory));
+        args.add(getDestinationPath());
 
         return args.toArray(new String[0]);
     }
