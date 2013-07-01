@@ -378,7 +378,7 @@ public class MainActivity extends Activity {
 
     private String[] buildArgs() {
         List<String> args = new LinkedList<String>();
-        args.add("/usr/local/bin/ffmpeg");
+        args.add("ffmpeg");
         args.add("-loglevel");
         args.add("quiet");
         args.add("-y");
