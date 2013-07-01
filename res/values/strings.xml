@@ -2,7 +2,6 @@
 <resources>
     <string name="app_name">animator</string>
     <string name="action_make_movie">Make movie</string>
-    <string name="hello_world">Hello world!</string>
     <string name="action_clear_project">Clear this project</string>
 </resources>
 <!--
