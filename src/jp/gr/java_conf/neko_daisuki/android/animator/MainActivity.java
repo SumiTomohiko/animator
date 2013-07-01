@@ -324,10 +324,6 @@ public class MainActivity extends Activity {
         list.setAdapter(new Adapter());
 
         mView = (SurfaceView)findViewById(R.id.preview);
-        SurfaceHolder holder = mView.getHolder();
-        holder.addCallback(new SurfaceListener());
-        holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-        mCamera = Camera.open();
 
         mNexecClient = new NexecClient(this);
         OnGetLineListener outListener = new OnGetLineListener();
@@ -350,13 +346,19 @@ public class MainActivity extends Activity {
         mActivityResultDispatcher.dispatch(requestCode, resultCode, data);
     }
 
-    protected void onPause() {
-        super.onPause();
-        mCamera.stopPreview();
+    protected void onResume() {
+        super.onResume();
+
+        SurfaceHolder holder = mView.getHolder();
+        holder.addCallback(new SurfaceListener());
+        holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+        mCamera = Camera.open();
     }
 
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onPause() {
+        super.onPause();
+
+        mCamera.stopPreview();
         mCamera.release();
     }
 
