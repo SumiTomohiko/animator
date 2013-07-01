@@ -3,8 +3,11 @@ package jp.gr.java_conf.neko_daisuki.android.animator;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -30,6 +33,8 @@ import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.JsonReader;
+import android.util.JsonWriter;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -64,8 +69,8 @@ public class MainActivity extends Activity {
     private class CreateProjectDialogOkButtonOnClickListener implements DialogInterface.OnClickListener {
 
         public void onClick(DialogInterface dialog, int id) {
-            String name = mCreateProjectDialogViews.text.getText().toString();
-            changeToNewProject(name);
+            writeProject();
+            changeProject(mCreateProjectDialogViews.text.getText().toString());
         }
     }
 
@@ -126,8 +131,7 @@ public class MainActivity extends Activity {
     private class RenameProjectAction implements MenuAction {
 
         public void run() {
-            EditText text = mRenameProjectDialogViews.text;
-            text.setText(new File(mProjectDirectory).getName());
+            mRenameProjectDialogViews.text.setText(getProjectName());
             showDialog(DIALOG_RENAME_PROJECT);
         }
     }
@@ -476,8 +480,6 @@ public class MainActivity extends Activity {
 
         mCreateProjectDialogViews = createProjectNameDialog();
         mRenameProjectDialogViews = createProjectNameDialog();
-
-        changeToNewProject("default");
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -486,6 +488,10 @@ public class MainActivity extends Activity {
 
     protected void onResume() {
         super.onResume();
+
+        String defaultName = readDefaultProjectName();
+        String projectName = defaultName != null ? defaultName : "default";
+        changeProject(projectName);
 
         SurfaceHolder holder = mView.getHolder();
         holder.addCallback(new SurfaceListener());
@@ -498,6 +504,9 @@ public class MainActivity extends Activity {
 
         mCamera.stopPreview();
         mCamera.release();
+
+        writeProject();
+        writeDefaultProjectName();
     }
 
     private void showException(String msg, Throwable e) {
@@ -567,16 +576,143 @@ public class MainActivity extends Activity {
         return views;
     }
 
-    private String getProjectDirectory(String name) {
+    private String getApplicationDirectory() {
         File parentDirectory = Environment.getExternalStorageDirectory();
         String absoluteParentDirectory = parentDirectory.getAbsolutePath();
-        String fmt = "%s/.animator/%s";
-        return String.format(fmt, absoluteParentDirectory, name);
+        return String.format("%s/.animator", absoluteParentDirectory);
     }
 
-    private void changeToNewProject(String name) {
+    private String getProjectDirectory(String name) {
+        return String.format("%s/%s", getApplicationDirectory(), name);
+    }
+
+    private String readDefaultProjectName() {
+        String path = getDefaultJsonPath();
+        Reader fileReader;
+        try {
+            fileReader = new FileReader(path);
+        }
+        catch (FileNotFoundException e) {
+            return null;
+        }
+        try {
+            JsonReader reader = new JsonReader(fileReader);
+            try {
+                reader.beginObject();
+                while (reader.hasNext()) {
+                    String name = reader.nextName();
+                    if (name.equals("name")) {
+                        return reader.nextString();
+                    }
+                }
+                reader.endObject();
+            }
+            finally {
+                reader.close();
+            }
+        }
+        catch (IOException e) {
+            showException(String.format("failed to read %s", path), e);
+        }
+        return null;
+    }
+
+    private void changeProject(String name) {
         mProjectDirectory = getProjectDirectory(name);
+
+        /*
+         * If readDefaultProjectName() returns non-null to onResume(), the
+         * following statement must be unneeded. But it is harmless, too. So I
+         * placed it here to simplify the code.
+         */
         new File(mProjectDirectory).mkdirs();
+
+        mFrames.clear();
+
+        String path = getProjectJsonPath();
+        Reader fileReader;
+        try {
+            fileReader = new FileReader(path);
+        }
+        catch (FileNotFoundException e) {
+            return;
+        }
+        try {
+            JsonReader reader = new JsonReader(fileReader);
+            try {
+                reader.beginObject();
+                while (reader.hasNext()) {
+                    String key = reader.nextName();
+                    if (key.equals("frames")) {
+                        reader.beginArray();
+                        while (reader.hasNext()) {
+                            mFrames.add(reader.nextString());
+                        }
+                        reader.endArray();
+                    }
+                }
+                reader.endObject();
+            }
+            finally {
+                reader.close();
+            }
+        }
+        catch (IOException e) {
+            showException(String.format("failed to read %s", path), e);
+        }
+    }
+
+    private String getProjectJsonPath() {
+        return String.format("%s/project.json", mProjectDirectory);
+    }
+
+    private void writeProject() {
+        String path = getProjectJsonPath();
+        try {
+            JsonWriter writer = new JsonWriter(new FileWriter(path));
+            try {
+                writer.beginObject();
+                writer.name("frames");
+                writer.beginArray();
+                for (String id: mFrames) {
+                    writer.value(id);
+                }
+                writer.endArray();
+                writer.endObject();
+            }
+            finally {
+                writer.close();
+            }
+        }
+        catch (IOException e) {
+            showException(String.format("failed to write %s", path), e);
+        }
+    }
+
+    private String getDefaultJsonPath() {
+        return String.format("%s/default.json", getApplicationDirectory());
+    }
+
+    private void writeDefaultProjectName() {
+        String path = getDefaultJsonPath();
+        try {
+            JsonWriter writer = new JsonWriter(new FileWriter(path));
+            try {
+                writer.beginObject();
+                writer.name("name").value(getProjectName());
+                writer.endObject();
+            }
+            finally {
+                writer.close();
+            }
+        }
+        catch (IOException e) {
+            showException(String.format("failed to write %s", path), e);
+        }
+    }
+
+    private String getProjectName() {
+        return new File(mProjectDirectory).getName();
     }
 }
 
