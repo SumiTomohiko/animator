@@ -2,6 +2,9 @@
     <item
         android:id="@+id/action_make_movie"
         android:title="@string/action_make_movie"/>
+    <item
+        android:id="@+id/action_clear_project"
+        android:title="@string/action_clear_project"/>
 </menu>
 <!--
 vim: tabstop=4 shiftwidth=4 expandtab softtabstop=4

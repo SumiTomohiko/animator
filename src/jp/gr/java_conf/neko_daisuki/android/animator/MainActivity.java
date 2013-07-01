@@ -28,6 +28,7 @@ import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -44,6 +45,33 @@ import com.devsmart.android.ui.HorizontalListView;
 import jp.gr.java_conf.neko_daisuki.android.nexec.client.NexecClient;
 
 public class MainActivity extends Activity {
+
+    private interface MenuAction {
+
+        public void run();
+    }
+
+    private class ClearProjectAction implements MenuAction {
+
+        public void run() {
+            File directory = new File(mProjectDirectory);
+            for (File file: directory.listFiles()) {
+                file.delete();
+            }
+        }
+    }
+
+    private class MakeMovieAction implements MenuAction {
+
+        public void run() {
+            NexecClient.Settings settings = new NexecClient.Settings();
+            settings.host = "192.168.11.8";
+            settings.port = 57005;
+            settings.args = buildArgs();
+            settings.files = listFiles();
+            mNexecClient.request(settings, REQUEST_CONFIRM);
+        }
+    }
 
     private class OnFinishListener implements NexecClient.OnFinishListener {
 
@@ -295,6 +323,7 @@ public class MainActivity extends Activity {
     private PictureCallback mJpegCallback = new JpegCallback();
     private NexecClient mNexecClient;
     private ActivityResultDispatcher mActivityResultDispatcher;
+    private SparseArray<MenuAction> mMenuActions;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -304,12 +333,7 @@ public class MainActivity extends Activity {
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
-        NexecClient.Settings settings = new NexecClient.Settings();
-        settings.host = "192.168.11.8";
-        settings.port = 57005;
-        settings.args = buildArgs();
-        settings.files = listFiles();
-        mNexecClient.request(settings, REQUEST_CONFIRM);
+        mMenuActions.get(item.getItemId()).run();
         return true;
     }
 
@@ -340,6 +364,10 @@ public class MainActivity extends Activity {
         String fmt = "%s/.animator/default";
         mProjectDirectory = String.format(fmt, absoluteParentDirectory);
         new File(mProjectDirectory).mkdirs();
+
+        mMenuActions = new SparseArray<MenuAction>();
+        mMenuActions.put(R.id.action_clear_project, new ClearProjectAction());
+        mMenuActions.put(R.id.action_make_movie, new MakeMovieAction());
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
