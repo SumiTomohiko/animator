@@ -88,13 +88,6 @@ public class MainActivity extends Activity {
         }
     }
 
-    private class DialogCancelButtonOnClickListener implements DialogInterface.OnClickListener {
-
-        public void onClick(DialogInterface dialog, int id) {
-            // Does nothing.
-        }
-    }
-
     private interface DialogCreator {
 
         public Dialog create();
@@ -129,8 +122,7 @@ public class MainActivity extends Activity {
             Builder builder = new Builder(MainActivity.this);
             builder.setView(getView());
             builder.setPositiveButton("Okey", getOnClickListener());
-            builder.setNegativeButton(
-                    "Cancel", new DialogCancelButtonOnClickListener());
+            builder.setNegativeButton("Cancel", null);
             return builder.create();
         }
 
