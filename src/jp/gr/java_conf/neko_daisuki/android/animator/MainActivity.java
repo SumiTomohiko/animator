@@ -55,6 +55,20 @@ import jp.gr.java_conf.neko_daisuki.android.nexec.client.NexecClient;
 
 public class MainActivity extends Activity {
 
+    private class SelectProjectDialogOnClickListener implements DialogInterface.OnClickListener {
+
+        private String[] mProjects;
+
+        public SelectProjectDialogOnClickListener(String[] projects) {
+            mProjects = projects;
+        }
+
+        public void onClick(DialogInterface dialog, int id) {
+            writeProject();
+            changeProject(mProjects[id]);
+        }
+    }
+
     private class RenameProjectDialogOkButtonOnClickListener implements DialogInterface.OnClickListener {
 
         public void onClick(DialogInterface dialog, int id) {
@@ -84,6 +98,29 @@ public class MainActivity extends Activity {
     private interface DialogCreator {
 
         public Dialog create();
+    }
+
+    private class SelectProjectDialogCreator implements DialogCreator {
+
+        public Dialog create() {
+            String[] projects = listProjects();
+
+            Builder builder = new Builder(MainActivity.this);
+            builder.setItems(
+                    projects, new SelectProjectDialogOnClickListener(projects));
+            builder.setNegativeButton("Cancel", null);
+            return builder.create();
+        }
+
+        private String[] listProjects() {
+            List<String> projects = new LinkedList<String>();
+            for (File file: new File(getApplicationDirectory()).listFiles()) {
+                String[] a = file.isDirectory()
+                    ? new String[] { file.getName() } : new String[0];
+                projects.addAll(Arrays.asList(a));
+            }
+            return projects.toArray(new String[0]);
+        }
     }
 
     private abstract class ProjectNameDialogCreator implements DialogCreator {
@@ -140,6 +177,13 @@ public class MainActivity extends Activity {
 
         public void run() {
             showDialog(DIALOG_CREATE_PROJECT);
+        }
+    }
+
+    private class SelectProjectAction implements MenuAction {
+
+        public void run() {
+            showDialog(DIALOG_SELECT_PROJECT);
         }
     }
 
@@ -410,6 +454,7 @@ public class MainActivity extends Activity {
     private static final int REQUEST_CONFIRM = 0;
     private static final int DIALOG_CREATE_PROJECT = 0;
     private static final int DIALOG_RENAME_PROJECT = 1;
+    private static final int DIALOG_SELECT_PROJECT = 2;
 
     // Document
     private String mProjectDirectory;
@@ -470,6 +515,7 @@ public class MainActivity extends Activity {
         mMenuActions.put(R.id.action_create_project, new CreateProjectAction());
         mMenuActions.put(R.id.action_rename_project, new RenameProjectAction());
         mMenuActions.put(R.id.action_clear_project, new ClearProjectAction());
+        mMenuActions.put(R.id.action_select_project, new SelectProjectAction());
         mMenuActions.put(R.id.action_make_movie, new MakeMovieAction());
 
         mDialogCreators = new SparseArray<DialogCreator>();
@@ -477,6 +523,8 @@ public class MainActivity extends Activity {
                 DIALOG_CREATE_PROJECT, new CreateProjectDialogCreator());
         mDialogCreators.put(
                 DIALOG_RENAME_PROJECT, new RenameProjectDialogCreator());
+        mDialogCreators.put(
+                DIALOG_SELECT_PROJECT, new SelectProjectDialogCreator());
 
         mCreateProjectDialogViews = createProjectNameDialog();
         mRenameProjectDialogViews = createProjectNameDialog();
@@ -621,9 +669,8 @@ public class MainActivity extends Activity {
         mProjectDirectory = getProjectDirectory(name);
 
         /*
-         * If readDefaultProjectName() returns non-null to onResume(), the
-         * following statement must be unneeded. But it is harmless, too. So I
-         * placed it here to simplify the code.
+         * When a user changes the project, the following statement is unneeded.
+         * But it is harmless, too. So I placed it here to simplify the code.
          */
         new File(mProjectDirectory).mkdirs();
 

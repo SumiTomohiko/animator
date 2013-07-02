@@ -5,6 +5,7 @@
     <string name="action_create_project">Create a new project</string>
     <string name="action_rename_project">Rename this project</string>
     <string name="action_clear_project">Clear this project</string>
+    <string name="action_select_project">Select another project</string>
 </resources>
 <!--
 vim: tabstop=4 shiftwidth=4 expandtab softtabstop=4
