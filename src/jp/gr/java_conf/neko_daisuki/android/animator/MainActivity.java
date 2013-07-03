@@ -197,6 +197,7 @@ public class MainActivity extends Activity {
             settings.port = 57005;
             settings.args = buildArgs();
             settings.files = listFiles();
+            addLinks(settings);
             mNexecClient.request(settings, REQUEST_CONFIRM);
         }
     }
@@ -570,6 +571,21 @@ public class MainActivity extends Activity {
         return String.format("%s/movie.mp4", mProjectDirectory);
     }
 
+    private void addLink(NexecClient.Settings settings, String id, int n) {
+        String dest = getOriginalFilePath(id);
+        String src = String.format("%s/%d.jpg", mProjectDirectory, n);
+        settings.addLink(dest, src);
+    }
+
+    private void addLinks(NexecClient.Settings settings) {
+        addLink(settings, mFrames.get(0), 1);
+
+        int len = mFrames.size();
+        for (int i = 0; i < len; i++) {
+            addLink(settings, mFrames.get(i), i + 2);
+        }
+    }
+
     private String[] listFiles() {
         List<String> files = new LinkedList<String>();
 
@@ -589,13 +605,13 @@ public class MainActivity extends Activity {
         args.add("quiet");
         args.add("-y");
         args.add("-r");
-        args.add("1");
+        args.add("8");
         args.add("-f");
         args.add("image2");
-        for (String id: mFrames) {
-            args.add("-i");
-            args.add(getOriginalFilePath(id));
-        }
+        args.add("-i");
+        args.add(String.format("%s/%%d.jpg", mProjectDirectory));
+        args.add("-r");
+        args.add("24");
         args.add("-s");
         args.add("xga");
         args.add(getDestinationPath());
