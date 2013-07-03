@@ -598,25 +598,10 @@ public class MainActivity extends Activity {
     }
 
     private String[] buildArgs() {
-        List<String> args = new LinkedList<String>();
-
-        args.add("ffmpeg");
-        args.add("-loglevel");
-        args.add("quiet");
-        args.add("-y");
-        args.add("-r");
-        args.add("8");
-        args.add("-f");
-        args.add("image2");
-        args.add("-i");
-        args.add(String.format("%s/%%d.jpg", mProjectDirectory));
-        args.add("-r");
-        args.add("24");
-        args.add("-s");
-        args.add("xga");
-        args.add(getDestinationPath());
-
-        return args.toArray(new String[0]);
+        return new String[] {
+            "ffmpeg", "-loglevel", "quiet", "-y", "-r", "8", "-f", "image2",
+            "-i", String.format("%s/%%d.jpg", mProjectDirectory), "-r", "24",
+            "-s", "xga", getDestinationPath() };
     }
 
     private View inflateProjectNameDialog() {
