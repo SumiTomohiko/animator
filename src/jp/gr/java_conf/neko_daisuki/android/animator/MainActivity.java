@@ -592,6 +592,16 @@ public class MainActivity extends Activity {
     }
 
     private void addLinks(NexecClient.Settings settings) {
+        /*
+         * Why does the following statement add the first image? Will the movie
+         * have two frames of the first image?
+         *
+         * This is for a bug of ffmpeg[1][2]. ffmpeg makes an image2 movie with
+         * a very short first image. This bug is not fixed still (2013-07-04).
+         *
+         * [1] https://ffmpeg.org/trac/ffmpeg/ticket/1578
+         * [2] https://ffmpeg.org/trac/ffmpeg/ticket/1925
+         */
         addLink(settings, mFrames.get(0), 1);
 
         int len = mFrames.size();
