@@ -443,6 +443,19 @@ public class MainActivity extends Activity {
         public EditText text;
     }
 
+    private static class FrameRate {
+
+        private int mRate;
+
+        public FrameRate(int rate) {
+            mRate = rate;
+        }
+
+        public String toString() {
+            return Integer.toString(mRate);
+        }
+    }
+
     private static final String TAG = "animator";
     private static final int REQUEST_CONFIRM = 0;
     private static final int DIALOG_CREATE_PROJECT = 0;
@@ -452,6 +465,7 @@ public class MainActivity extends Activity {
     // Document
     private String mProjectDirectory;
     private List<String> mFrames = new ArrayList<String>();
+    private FrameRate mFrameRate = new FrameRate(8);
 
     // View
     private SurfaceView mView;
@@ -599,9 +613,10 @@ public class MainActivity extends Activity {
 
     private String[] buildArgs() {
         return new String[] {
-            "ffmpeg", "-loglevel", "quiet", "-y", "-r", "8", "-f", "image2",
-            "-i", String.format("%s/%%d.jpg", mProjectDirectory), "-r", "24",
-            "-s", "xga", getDestinationPath() };
+            "ffmpeg", "-loglevel", "quiet", "-y", "-r", mFrameRate.toString(),
+            "-f", "image2", "-i",
+            String.format("%s/%%d.jpg", mProjectDirectory), "-r", "24", "-s",
+            "xga", getDestinationPath() };
     }
 
     private View inflateProjectNameDialog() {
