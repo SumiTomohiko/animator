@@ -601,6 +601,8 @@ public class MainActivity extends Activity {
          *
          * [1] https://ffmpeg.org/trac/ffmpeg/ticket/1578
          * [2] https://ffmpeg.org/trac/ffmpeg/ticket/1925
+         *
+         * Version of ffmpeg which I tried is 0.7.15.
          */
         addLink(settings, mFrames.get(0), 1);
 
