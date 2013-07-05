@@ -20,6 +20,7 @@ import java.util.Map;
 
 import android.app.Activity;
 import android.app.AlertDialog.Builder;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -33,6 +34,8 @@ import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
 import android.util.JsonReader;
 import android.util.JsonWriter;
 import android.util.Log;
@@ -53,7 +56,66 @@ import android.widget.Toast;
 import com.devsmart.android.ui.HorizontalListView;
 import jp.gr.java_conf.neko_daisuki.android.nexec.client.NexecClient;
 
-public class MainActivity extends Activity {
+public class MainActivity extends FragmentActivity {
+
+    private abstract static class ProjectNameDialog extends DialogFragment {
+
+        private class OnShowListener implements DialogInterface.OnShowListener {
+
+            private class OkeyButtonOnClickListener implements OnClickListener {
+
+                public void onClick(View view) {
+                    MainActivity activity = (MainActivity)getActivity();
+                    String name = mNameEdit.getText().toString().trim();
+                    if (name.equals("")) {
+                        return;
+                    }
+                    onOkey(activity, name);
+                    mDialog.dismiss();
+                }
+            }
+
+            private AlertDialog mDialog;
+
+            public OnShowListener(AlertDialog dialog) {
+                mDialog = dialog;
+            }
+
+            public void onShow(DialogInterface dialog) {
+                View button = mDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                button.setOnClickListener(new OkeyButtonOnClickListener());
+            }
+        }
+
+        private EditText mNameEdit;
+
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            Activity activity = getActivity();
+            Builder builder = new Builder(activity);
+
+            LayoutInflater inflater = activity.getLayoutInflater();
+            View view = inflater.inflate(R.layout.dialog_project_name, null);
+            builder.setView(view);
+            mNameEdit = (EditText)view.findViewById(R.id.name);
+
+            builder.setPositiveButton("Okey", null);
+            builder.setNegativeButton("Cancel", null);
+            AlertDialog d = builder.create();
+            d.setOnShowListener(new OnShowListener(d));
+
+            return d;
+        }
+
+        protected abstract void onOkey(MainActivity activity, String name);
+    }
+
+    public static class CreateProjectDialog extends ProjectNameDialog {
+
+        protected void onOkey(MainActivity activity, String name) {
+            activity.writeProject();
+            activity.changeProject(name);
+        }
+    }
 
     private class SelectProjectDialogOnClickListener implements DialogInterface.OnClickListener {
 
@@ -168,7 +230,8 @@ public class MainActivity extends Activity {
     private class CreateProjectAction implements MenuAction {
 
         public void run() {
-            showDialog(DIALOG_CREATE_PROJECT);
+            DialogFragment dialog = new CreateProjectDialog();
+            dialog.show(getSupportFragmentManager(), "dialog");
         }
     }
 
@@ -458,7 +521,6 @@ public class MainActivity extends Activity {
 
     private static final String TAG = "animator";
     private static final int REQUEST_CONFIRM = 0;
-    private static final int DIALOG_CREATE_PROJECT = 0;
     private static final int DIALOG_RENAME_PROJECT = 1;
     private static final int DIALOG_SELECT_PROJECT = 2;
 
@@ -526,8 +588,6 @@ public class MainActivity extends Activity {
         mMenuActions.put(R.id.action_make_movie, new MakeMovieAction());
 
         mDialogCreators = new SparseArray<DialogCreator>();
-        mDialogCreators.put(
-                DIALOG_CREATE_PROJECT, new CreateProjectDialogCreator());
         mDialogCreators.put(
                 DIALOG_RENAME_PROJECT, new RenameProjectDialogCreator());
         mDialogCreators.put(
