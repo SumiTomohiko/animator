@@ -28,7 +28,6 @@ import android.content.Intent;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Rect;
 import android.hardware.Camera.Parameters;
 import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera;
@@ -478,12 +477,6 @@ public class MainActivity extends FragmentActivity {
 
             return l;
         }
-    }
-
-    private static class ProjectNameDialogViews {
-
-        public View dialog;
-        public EditText text;
     }
 
     private static class FrameRate {
