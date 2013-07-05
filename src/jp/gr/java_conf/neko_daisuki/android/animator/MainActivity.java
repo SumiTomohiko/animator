@@ -161,14 +161,6 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
-    private class CreateProjectDialogOkButtonOnClickListener implements DialogInterface.OnClickListener {
-
-        public void onClick(DialogInterface dialog, int id) {
-            writeProject();
-            changeProject(mCreateProjectDialogViews.text.getText().toString());
-        }
-    }
-
     private interface DialogCreator {
 
         public Dialog create();
@@ -209,17 +201,6 @@ public class MainActivity extends FragmentActivity {
 
         protected abstract View getView();
         protected abstract DialogInterface.OnClickListener getOnClickListener();
-    }
-
-    private class CreateProjectDialogCreator extends ProjectNameDialogCreator {
-
-        protected View getView() {
-            return mCreateProjectDialogViews.dialog;
-        }
-
-        protected DialogInterface.OnClickListener getOnClickListener() {
-            return new CreateProjectDialogOkButtonOnClickListener();
-        }
     }
 
     private interface MenuAction {
@@ -539,7 +520,6 @@ public class MainActivity extends FragmentActivity {
 
     // View
     private SurfaceView mView;
-    private ProjectNameDialogViews mCreateProjectDialogViews;
 
     // Helper
     private Camera mCamera;
@@ -597,8 +577,6 @@ public class MainActivity extends FragmentActivity {
         mDialogCreators = new SparseArray<DialogCreator>();
         mDialogCreators.put(
                 DIALOG_SELECT_PROJECT, new SelectProjectDialogCreator());
-
-        mCreateProjectDialogViews = createProjectNameDialog();
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -693,19 +671,6 @@ public class MainActivity extends FragmentActivity {
             "-f", "image2", "-i",
             String.format("%s/%%d.jpg", mProjectDirectory), "-r", "24", "-s",
             "xga", getDestinationPath() };
-    }
-
-    private View inflateProjectNameDialog() {
-        return getLayoutInflater().inflate(R.layout.dialog_project_name, null);
-    }
-
-    private ProjectNameDialogViews createProjectNameDialog() {
-        ProjectNameDialogViews views = new ProjectNameDialogViews();
-
-        views.dialog = inflateProjectNameDialog();
-        views.text = (EditText)views.dialog.findViewById(R.id.name);
-
-        return views;
     }
 
     private String getApplicationDirectory() {
