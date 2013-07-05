@@ -58,6 +58,40 @@ import jp.gr.java_conf.neko_daisuki.android.nexec.client.NexecClient;
 
 public class MainActivity extends FragmentActivity {
 
+    private static class SelectProjectDialog extends DialogFragment {
+
+        private class ListOnClickListener implements DialogInterface.OnClickListener {
+
+            public void onClick(DialogInterface dialog, int id) {
+                MainActivity activity = (MainActivity)getActivity();
+                activity.writeProject();
+                activity.changeProject(mProjects[id]);
+            }
+        }
+
+        private static final String KEY_PROJECTS = "projects";
+
+        private String[] mProjects;
+
+        public static SelectProjectDialog newInstance(String[] projects) {
+            SelectProjectDialog dialog = new SelectProjectDialog();
+            Bundle args = new Bundle();
+            args.putStringArray(KEY_PROJECTS, projects);
+            dialog.setArguments(args);
+            return dialog;
+        }
+
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            Activity activity = getActivity();
+            Builder builder = new Builder(activity);
+            mProjects = getArguments().getStringArray(KEY_PROJECTS);
+            builder.setItems(mProjects, new ListOnClickListener());
+            builder.setNegativeButton("Cancel", null);
+
+            return builder.create();
+        }
+    }
+
     private abstract static class ProjectNameDialog extends DialogFragment {
 
         private class OnShowListener implements DialogInterface.OnShowListener {
@@ -147,62 +181,6 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
-    private class SelectProjectDialogOnClickListener implements DialogInterface.OnClickListener {
-
-        private String[] mProjects;
-
-        public SelectProjectDialogOnClickListener(String[] projects) {
-            mProjects = projects;
-        }
-
-        public void onClick(DialogInterface dialog, int id) {
-            writeProject();
-            changeProject(mProjects[id]);
-        }
-    }
-
-    private interface DialogCreator {
-
-        public Dialog create();
-    }
-
-    private class SelectProjectDialogCreator implements DialogCreator {
-
-        public Dialog create() {
-            String[] projects = listProjects();
-
-            Builder builder = new Builder(MainActivity.this);
-            builder.setItems(
-                    projects, new SelectProjectDialogOnClickListener(projects));
-            builder.setNegativeButton("Cancel", null);
-            return builder.create();
-        }
-
-        private String[] listProjects() {
-            List<String> projects = new LinkedList<String>();
-            for (File file: new File(getApplicationDirectory()).listFiles()) {
-                String[] a = file.isDirectory()
-                    ? new String[] { file.getName() } : new String[0];
-                projects.addAll(Arrays.asList(a));
-            }
-            return projects.toArray(new String[0]);
-        }
-    }
-
-    private abstract class ProjectNameDialogCreator implements DialogCreator {
-
-        public Dialog create() {
-            Builder builder = new Builder(MainActivity.this);
-            builder.setView(getView());
-            builder.setPositiveButton("Okey", getOnClickListener());
-            builder.setNegativeButton("Cancel", null);
-            return builder.create();
-        }
-
-        protected abstract View getView();
-        protected abstract DialogInterface.OnClickListener getOnClickListener();
-    }
-
     private interface MenuAction {
 
         public void run();
@@ -228,7 +206,19 @@ public class MainActivity extends FragmentActivity {
     private class SelectProjectAction implements MenuAction {
 
         public void run() {
-            showDialog(DIALOG_SELECT_PROJECT);
+            SelectProjectDialog dialog;
+            dialog = SelectProjectDialog.newInstance(listProjects());
+            dialog.show(getSupportFragmentManager(), "dialog");
+        }
+
+        private String[] listProjects() {
+            List<String> projects = new LinkedList<String>();
+            for (File file: new File(getApplicationDirectory()).listFiles()) {
+                String[] a = file.isDirectory()
+                    ? new String[] { file.getName() } : new String[0];
+                projects.addAll(Arrays.asList(a));
+            }
+            return projects.toArray(new String[0]);
         }
     }
 
@@ -511,7 +501,6 @@ public class MainActivity extends FragmentActivity {
 
     private static final String TAG = "animator";
     private static final int REQUEST_CONFIRM = 0;
-    private static final int DIALOG_SELECT_PROJECT = 2;
 
     // Document
     private String mProjectDirectory;
@@ -527,7 +516,6 @@ public class MainActivity extends FragmentActivity {
     private NexecClient mNexecClient;
     private ActivityResultDispatcher mActivityResultDispatcher;
     private SparseArray<MenuAction> mMenuActions;
-    private SparseArray<DialogCreator> mDialogCreators;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -539,10 +527,6 @@ public class MainActivity extends FragmentActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         mMenuActions.get(item.getItemId()).run();
         return true;
-    }
-
-    protected Dialog onCreateDialog(int id) {
-        return mDialogCreators.get(id).create();
     }
 
     @Override
@@ -573,10 +557,6 @@ public class MainActivity extends FragmentActivity {
         mMenuActions.put(R.id.action_clear_project, new ClearProjectAction());
         mMenuActions.put(R.id.action_select_project, new SelectProjectAction());
         mMenuActions.put(R.id.action_make_movie, new MakeMovieAction());
-
-        mDialogCreators = new SparseArray<DialogCreator>();
-        mDialogCreators.put(
-                DIALOG_SELECT_PROJECT, new SelectProjectDialogCreator());
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
