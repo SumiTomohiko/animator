@@ -565,7 +565,6 @@ public class MainActivity extends FragmentActivity {
 
         SurfaceHolder holder = mView.getHolder();
         holder.addCallback(new SurfaceListener());
-        holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
         mCamera = Camera.open();
     }
 
