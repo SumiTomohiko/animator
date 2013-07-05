@@ -6,6 +6,9 @@
     <string name="action_rename_project">Rename this project</string>
     <string name="action_clear_project">Clear this project</string>
     <string name="action_select_project">Select another project</string>
+    <string name="dialog_clear_project">
+        You are about to delete all of this project. Are you sure?
+    </string>
 </resources>
 <!--
 vim: tabstop=4 shiftwidth=4 expandtab softtabstop=4

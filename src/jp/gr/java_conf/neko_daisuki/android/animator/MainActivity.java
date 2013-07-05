@@ -57,6 +57,41 @@ import jp.gr.java_conf.neko_daisuki.android.nexec.client.NexecClient;
 
 public class MainActivity extends FragmentActivity {
 
+    private static class ClearProjectDialog extends DialogFragment {
+
+        private class OkeyButtonOnClickListener implements DialogInterface.OnClickListener {
+
+            public void onClick(DialogInterface dialog, int which) {
+                for (File file: new File(mDirectory).listFiles()) {
+                    file.delete();
+                }
+            }
+        }
+
+        private static final String KEY_DIRECTORY = "directory";
+
+        private String mDirectory;
+
+        public static ClearProjectDialog newInstance(String directory) {
+            ClearProjectDialog dialog = new ClearProjectDialog();
+            Bundle args = new Bundle();
+            args.putString(KEY_DIRECTORY, directory);
+            dialog.setArguments(args);
+            return dialog;
+        }
+
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            Activity activity = getActivity();
+            Builder builder = new Builder(activity);
+            mDirectory = getArguments().getString(KEY_DIRECTORY);
+            builder.setMessage(R.string.dialog_clear_project);
+            builder.setPositiveButton("Okey", new OkeyButtonOnClickListener());
+            builder.setNegativeButton("Cancel", null);
+
+            return builder.create();
+        }
+    }
+
     private static class SelectProjectDialog extends DialogFragment {
 
         private class ListOnClickListener implements DialogInterface.OnClickListener {
@@ -224,10 +259,9 @@ public class MainActivity extends FragmentActivity {
     private class ClearProjectAction implements MenuAction {
 
         public void run() {
-            File directory = new File(mProjectDirectory);
-            for (File file: directory.listFiles()) {
-                file.delete();
-            }
+            String directory = mProjectDirectory;
+            DialogFragment dialog = ClearProjectDialog.newInstance(directory);
+            dialog.show(getSupportFragmentManager(), "dialog");
         }
     }
 
