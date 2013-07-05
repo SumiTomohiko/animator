@@ -87,6 +87,8 @@ public class MainActivity extends FragmentActivity {
             }
         }
 
+        protected static final String KEY_NAME = "name";
+
         private EditText mNameEdit;
 
         public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -97,6 +99,7 @@ public class MainActivity extends FragmentActivity {
             View view = inflater.inflate(R.layout.dialog_project_name, null);
             builder.setView(view);
             mNameEdit = (EditText)view.findViewById(R.id.name);
+            mNameEdit.setText(getArguments().getString(KEY_NAME));
 
             builder.setPositiveButton("Okey", null);
             builder.setNegativeButton("Cancel", null);
@@ -109,7 +112,34 @@ public class MainActivity extends FragmentActivity {
         protected abstract void onOkey(MainActivity activity, String name);
     }
 
+    public static class RenameProjectDialog extends ProjectNameDialog {
+
+        public static RenameProjectDialog newInstance(String name) {
+            RenameProjectDialog dialog = new RenameProjectDialog();
+            Bundle args = new Bundle();
+            args.putString(KEY_NAME, name);
+            dialog.setArguments(args);
+
+            return dialog;
+        }
+
+        protected void onOkey(MainActivity activity, String name) {
+            String path = activity.getProjectDirectory(name);
+            new File(activity.mProjectDirectory).renameTo(new File(path));
+            activity.mProjectDirectory = path;
+        }
+    }
+
     public static class CreateProjectDialog extends ProjectNameDialog {
+
+        public static CreateProjectDialog newInstance() {
+            CreateProjectDialog dialog = new CreateProjectDialog();
+            Bundle args = new Bundle();
+            args.putString(KEY_NAME, "");
+            dialog.setArguments(args);
+
+            return dialog;
+        }
 
         protected void onOkey(MainActivity activity, String name) {
             activity.writeProject();
@@ -128,17 +158,6 @@ public class MainActivity extends FragmentActivity {
         public void onClick(DialogInterface dialog, int id) {
             writeProject();
             changeProject(mProjects[id]);
-        }
-    }
-
-    private class RenameProjectDialogOkButtonOnClickListener implements DialogInterface.OnClickListener {
-
-        public void onClick(DialogInterface dialog, int id) {
-            File src = new File(mProjectDirectory);
-            String name = mRenameProjectDialogViews.text.getText().toString();
-            String path = getProjectDirectory(name);
-            src.renameTo(new File(path));
-            mProjectDirectory = path;
         }
     }
 
@@ -203,17 +222,6 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
-    private class RenameProjectDialogCreator extends ProjectNameDialogCreator {
-
-        protected View getView() {
-            return mRenameProjectDialogViews.dialog;
-        }
-
-        protected DialogInterface.OnClickListener getOnClickListener() {
-            return new RenameProjectDialogOkButtonOnClickListener();
-        }
-    }
-
     private interface MenuAction {
 
         public void run();
@@ -222,15 +230,16 @@ public class MainActivity extends FragmentActivity {
     private class RenameProjectAction implements MenuAction {
 
         public void run() {
-            mRenameProjectDialogViews.text.setText(getProjectName());
-            showDialog(DIALOG_RENAME_PROJECT);
+            String name = getProjectName();
+            DialogFragment dialog = RenameProjectDialog.newInstance(name);
+            dialog.show(getSupportFragmentManager(), "dialog");
         }
     }
 
     private class CreateProjectAction implements MenuAction {
 
         public void run() {
-            DialogFragment dialog = new CreateProjectDialog();
+            DialogFragment dialog = CreateProjectDialog.newInstance();
             dialog.show(getSupportFragmentManager(), "dialog");
         }
     }
@@ -521,7 +530,6 @@ public class MainActivity extends FragmentActivity {
 
     private static final String TAG = "animator";
     private static final int REQUEST_CONFIRM = 0;
-    private static final int DIALOG_RENAME_PROJECT = 1;
     private static final int DIALOG_SELECT_PROJECT = 2;
 
     // Document
@@ -532,7 +540,6 @@ public class MainActivity extends FragmentActivity {
     // View
     private SurfaceView mView;
     private ProjectNameDialogViews mCreateProjectDialogViews;
-    private ProjectNameDialogViews mRenameProjectDialogViews;
 
     // Helper
     private Camera mCamera;
@@ -589,12 +596,9 @@ public class MainActivity extends FragmentActivity {
 
         mDialogCreators = new SparseArray<DialogCreator>();
         mDialogCreators.put(
-                DIALOG_RENAME_PROJECT, new RenameProjectDialogCreator());
-        mDialogCreators.put(
                 DIALOG_SELECT_PROJECT, new SelectProjectDialogCreator());
 
         mCreateProjectDialogViews = createProjectNameDialog();
-        mRenameProjectDialogViews = createProjectNameDialog();
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
