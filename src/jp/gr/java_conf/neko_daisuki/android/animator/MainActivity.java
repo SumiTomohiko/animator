@@ -107,7 +107,7 @@ public class MainActivity extends FragmentActivity {
 
         private String[] mProjects;
 
-        public static SelectProjectDialog newInstance(String[] projects) {
+        public static DialogFragment newInstance(String[] projects) {
             SelectProjectDialog dialog = new SelectProjectDialog();
             Bundle args = new Bundle();
             args.putStringArray(KEY_PROJECTS, projects);
@@ -182,7 +182,7 @@ public class MainActivity extends FragmentActivity {
 
     public static class RenameProjectDialog extends ProjectNameDialog {
 
-        public static RenameProjectDialog newInstance(String name) {
+        public static DialogFragment newInstance(String name) {
             RenameProjectDialog dialog = new RenameProjectDialog();
             Bundle args = new Bundle();
             args.putString(KEY_NAME, name);
@@ -200,7 +200,7 @@ public class MainActivity extends FragmentActivity {
 
     public static class CreateProjectDialog extends ProjectNameDialog {
 
-        public static CreateProjectDialog newInstance() {
+        public static DialogFragment newInstance() {
             CreateProjectDialog dialog = new CreateProjectDialog();
             Bundle args = new Bundle();
             args.putString(KEY_NAME, "");
@@ -240,8 +240,8 @@ public class MainActivity extends FragmentActivity {
     private class SelectProjectAction implements MenuAction {
 
         public void run() {
-            SelectProjectDialog dialog;
-            dialog = SelectProjectDialog.newInstance(listProjects());
+            String[] projects = listProjects();
+            DialogFragment dialog = SelectProjectDialog.newInstance(projects);
             dialog.show(getSupportFragmentManager(), "dialog");
         }
 
