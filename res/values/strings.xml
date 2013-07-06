@@ -1,14 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">animator</string>
+    <string name="title_activity_host_preference">Host Preference</string>
+
     <string name="action_make_movie">Make movie</string>
     <string name="action_create_project">Create a new project</string>
     <string name="action_rename_project">Rename this project</string>
     <string name="action_clear_project">Clear this project</string>
     <string name="action_select_project">Select another project</string>
+    <string name="action_host_preference">Host preference...</string>
+
     <string name="dialog_clear_project">
         You are about to delete all of this project. Are you sure?
     </string>
+
+    <string name="positive">Okey</string>
+    <string name="negative">Cancel</string>
 </resources>
 <!--
 vim: tabstop=4 shiftwidth=4 expandtab softtabstop=4

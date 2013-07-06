@@ -237,6 +237,17 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
+    private class HostPreferenceAction implements MenuAction {
+
+        public void run() {
+            Context ctx = MainActivity.this;
+            Intent intent = new Intent(ctx, HostPreferenceActivity.class);
+            intent.putExtra(HostPreferenceActivity.EXTRA_HOST, mHost);
+            intent.putExtra(HostPreferenceActivity.EXTRA_PORT, mPort);
+            startActivityForResult(intent, REQUEST_HOST_PREFERENCE);
+        }
+    }
+
     private class SelectProjectAction implements MenuAction {
 
         public void run() {
@@ -269,8 +280,8 @@ public class MainActivity extends FragmentActivity {
 
         public void run() {
             NexecClient.Settings settings = new NexecClient.Settings();
-            settings.host = "192.168.11.8";
-            settings.port = 57005;
+            settings.host = mHost;
+            settings.port = mPort;
             settings.args = buildArgs();
             settings.files = listFiles();
             addLinks(settings);
@@ -352,6 +363,16 @@ public class MainActivity extends FragmentActivity {
         private Proc getProc(int requestCode, int resultCode) {
             Proc proc = mMap.get(new ActivityResult(requestCode, resultCode));
             return proc != null ? proc : mFakeProc;
+        }
+    }
+
+    private class OnHostPreference implements ActivityResultDispatcher.Proc {
+
+        public void run(Intent data) {
+            String hostKey = HostPreferenceActivity.EXTRA_HOST;
+            String host = data.getStringExtra(hostKey);
+            int port = data.getIntExtra(HostPreferenceActivity.EXTRA_PORT, -1);
+            writeHost(host, port);
         }
     }
 
@@ -528,11 +549,14 @@ public class MainActivity extends FragmentActivity {
 
     private static final String TAG = "animator";
     private static final int REQUEST_CONFIRM = 0;
+    private static final int REQUEST_HOST_PREFERENCE = 1;
 
     // Document
     private String mProjectDirectory;
     private List<String> mFrames = new ArrayList<String>();
     private FrameRate mFrameRate = new FrameRate(8);
+    private String mHost = "neko-daisuki.ddo.jp";
+    private int mPort = 57005;
 
     // View
     private SurfaceView mView;
@@ -577,12 +601,16 @@ public class MainActivity extends FragmentActivity {
         mActivityResultDispatcher = new ActivityResultDispatcher();
         mActivityResultDispatcher.put(
                 REQUEST_CONFIRM, RESULT_OK, new OnConfirmOk());
+        mActivityResultDispatcher.put(
+                REQUEST_HOST_PREFERENCE, RESULT_OK, new OnHostPreference());
 
         mMenuActions = new SparseArray<MenuAction>();
         mMenuActions.put(R.id.action_create_project, new CreateProjectAction());
         mMenuActions.put(R.id.action_rename_project, new RenameProjectAction());
         mMenuActions.put(R.id.action_clear_project, new ClearProjectAction());
         mMenuActions.put(R.id.action_select_project, new SelectProjectAction());
+        mMenuActions.put(
+                R.id.action_host_preference, new HostPreferenceAction());
         mMenuActions.put(R.id.action_make_movie, new MakeMovieAction());
     }
 
@@ -593,6 +621,7 @@ public class MainActivity extends FragmentActivity {
     protected void onResume() {
         super.onResume();
 
+        readHost();
         String defaultName = readDefaultProjectName();
         String projectName = defaultName != null ? defaultName : "default";
         changeProject(projectName);
@@ -791,6 +820,29 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
+    private String getHostJsonPath() {
+        return String.format("%s/host.json", getApplicationDirectory());
+    }
+
+    private void writeHost(String host, int port) {
+        String path = getHostJsonPath();
+        try {
+            JsonWriter writer = new JsonWriter(new FileWriter(path));
+            try {
+                writer.beginObject();
+                writer.name("host").value(host);
+                writer.name("port").value(port);
+                writer.endObject();
+            }
+            finally {
+                writer.close();
+            }
+        }
+        catch (IOException e) {
+            showException(String.format("failed to write %s", path), e);
+        }
+    }
+
     private String getDefaultJsonPath() {
         return String.format("%s/default.json", getApplicationDirectory());
     }
@@ -815,6 +867,39 @@ public class MainActivity extends FragmentActivity {
 
     private String getProjectName() {
         return new File(mProjectDirectory).getName();
+    }
+
+    private void readHost() {
+        String path = getHostJsonPath();
+        Reader fileReader;
+        try {
+            fileReader = new FileReader(path);
+        }
+        catch (FileNotFoundException e) {
+            return;
+        }
+        try {
+            JsonReader reader = new JsonReader(fileReader);
+            try {
+                reader.beginObject();
+                while (reader.hasNext()) {
+                    String name = reader.nextName();
+                    if (name.equals("host")) {
+                        mHost = reader.nextString();
+                    }
+                    else if (name.equals("port")) {
+                        mPort = reader.nextInt();
+                    }
+                }
+                reader.endObject();
+            }
+            finally {
+                reader.close();
+            }
+        }
+        catch (IOException e) {
+            showException(String.format("failed to read %s", path), e);
+        }
     }
 }
 
