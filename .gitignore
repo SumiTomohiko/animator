@@ -1,6 +1,8 @@
 .settings
 bin
 com.devsmart.android.ui
+doc/icon.png
+doc/index.html
 gen
 ic_launcher-web.png
 jp.gr.java_conf.neko_daisuki.android.animator
