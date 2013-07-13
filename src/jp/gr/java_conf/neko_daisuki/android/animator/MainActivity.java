@@ -66,6 +66,8 @@ public class MainActivity extends FragmentActivity {
                 for (File file: new File(mDirectory).listFiles()) {
                     file.delete();
                 }
+                MainActivity activity = (MainActivity)getActivity();
+                activity.clearFrames();
             }
         }
 
@@ -430,8 +432,7 @@ public class MainActivity extends FragmentActivity {
                 return;
             }
 
-            mFrames.add(fileId);
-            mAdapter.notifyDataSetChanged();
+            addFrame(fileId);
         }
 
         private void saveThumbnail(String originalPath, String thumbnailPath) throws IOException {
@@ -906,6 +907,20 @@ public class MainActivity extends FragmentActivity {
         catch (IOException e) {
             showException(String.format("failed to read %s", path), e);
         }
+    }
+
+    private void clearFrames() {
+        mFrames.clear();
+        notifyDataSetChanged();
+    }
+
+    private void addFrame(String id) {
+        mFrames.add(id);
+        notifyDataSetChanged();
+    }
+
+    private void notifyDataSetChanged() {
+        mAdapter.notifyDataSetChanged();
     }
 }
 
