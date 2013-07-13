@@ -47,6 +47,7 @@ import android.view.SurfaceView;
 import android.view.View.OnClickListener;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -430,6 +431,7 @@ public class MainActivity extends FragmentActivity {
             }
 
             mFrames.add(fileId);
+            mAdapter.notifyDataSetChanged();
         }
 
         private void saveThumbnail(String originalPath, String thumbnailPath) throws IOException {
@@ -560,6 +562,7 @@ public class MainActivity extends FragmentActivity {
 
     // View
     private SurfaceView mView;
+    private Adapter mAdapter;
 
     // Helper
     private Camera mCamera;
@@ -588,7 +591,8 @@ public class MainActivity extends FragmentActivity {
         View shotButton = findViewById(R.id.shot_button);
         shotButton.setOnClickListener(new ShotButtonOnClickListener());
         HorizontalListView list = (HorizontalListView)findViewById(R.id.list);
-        list.setAdapter(new Adapter());
+        mAdapter = new Adapter();
+        list.setAdapter(mAdapter);
 
         mView = (SurfaceView)findViewById(R.id.preview);
 
@@ -787,6 +791,8 @@ public class MainActivity extends FragmentActivity {
             finally {
                 reader.close();
             }
+
+            mAdapter.notifyDataSetChanged();
         }
         catch (IOException e) {
             showException(String.format("failed to read %s", path), e);
