@@ -58,7 +58,7 @@ import jp.gr.java_conf.neko_daisuki.android.nexec.client.NexecClient;
 
 public class MainActivity extends FragmentActivity {
 
-    private static class ClearProjectDialog extends DialogFragment {
+    public static class ClearProjectDialog extends DialogFragment {
 
         private class OkeyButtonOnClickListener implements DialogInterface.OnClickListener {
 
@@ -95,7 +95,7 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
-    private static class SelectProjectDialog extends DialogFragment {
+    public static class SelectProjectDialog extends DialogFragment {
 
         private class ListOnClickListener implements DialogInterface.OnClickListener {
 
