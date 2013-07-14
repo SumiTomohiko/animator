@@ -6,6 +6,9 @@ all: apk
 apk:
 	@$(CMD)
 
+release:
+	@$(CMD) release
+
 icon:
 	@$(CMD) icon
 
