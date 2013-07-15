@@ -101,6 +101,89 @@ Frame rate is fixed to eight.
 
 Frame rate is always eight (eight frames per one second).
 
+Stop nexec client if it does not connect with a server.
+-------------------------------------------------------
+
+When you order "Make movie", nexec client connects with a server and executes a
+command. Usually, nexec client shows logs in logcat like (You can read system
+call requests and responses in this)::
+
+    07-16 04:32:52.620  1199  1212 D nexec client: SyscallInputStream: numeric representation of the command is 46.
+    07-16 04:32:52.620  1199  1212 D nexec client: SyscallInputStream: command is CALL_WRITE.
+    07-16 04:32:52.650  1199  1212 D nexec client: SlaveHub: command received: command=CALL_WRITE, pid=1826
+    07-16 04:32:52.650  1199  1212 D nexec client: SlaveHub: from the master to the slave: command=CALL_WRITE, payloadSize=3
+    07-16 04:32:52.650  1199  1212 V nexec client: SlaveHub: works of the slave hub were finished.
+    07-16 04:32:52.650  1199  1212 V nexec client: Slave: performing the work.
+    07-16 04:32:52.660  1199  1212 D nexec client: SyscallInputStream: numeric representation of the command is 46.
+    07-16 04:32:52.660  1199  1212 D nexec client: SyscallInputStream: command is CALL_WRITE.
+    07-16 04:32:52.660  1199  1212 D nexec client: SlaveHelper: read command: CALL_WRITE
+    07-16 04:32:52.660  1199  1212 I nexec client: Slave: write(fd=2, buf, nbytes=1)
+    07-16 04:32:52.660  1199  1212 I nexec client: SlaveHelper: result (generic64): retval=1
+    07-16 04:32:52.660  1199  1212 V nexec client: Slave: finished the work.
+    07-16 04:32:52.660  1199  1212 V nexec client: SlaveHub: works of the slave hub are being processed.
+    07-16 04:32:52.660  1199  1212 V nexec client: SlaveHub: the work for the slave is being processed.
+    07-16 04:32:52.660  1199  1212 D nexec client: SyscallInputStream: numeric representation of the command is 47.
+    07-16 04:32:52.660  1199  1212 D nexec client: SyscallInputStream: command is RET_WRITE.
+    07-16 04:32:52.670  1199  1212 D nexec client: SlaveHub: from the slave to the master: command=RET_WRITE, payloadSize=1
+    07-16 04:32:52.670  1199  1212 V nexec client: SlaveHub: the work for the slave was finished.
+    07-16 04:32:52.670  1199  1212 V nexec client: SlaveHub: works of the slave hub were finished.
+    07-16 04:32:52.770  1199  1212 V nexec client: SlaveHub: works of the slave hub are being processed.
+    07-16 04:32:52.770  1199  1212 V nexec client: SlaveHub: the work for the master hub is being processed.
+    07-16 04:32:52.770  1199  1212 D nexec client: SyscallInputStream: numeric representation of the command is 46.
+    07-16 04:32:52.770  1199  1212 D nexec client: SyscallInputStream: command is CALL_WRITE.
+    07-16 04:32:52.810  1199  1212 D nexec client: SlaveHub: command received: command=CALL_WRITE, pid=1826
+    07-16 04:32:52.810  1199  1212 D nexec client: SlaveHub: from the master to the slave: command=CALL_WRITE, payloadSize=34
+    07-16 04:32:52.810  1199  1212 V nexec client: SlaveHub: works of the slave hub were finished.
+    07-16 04:32:52.820  1199  1212 V nexec client: Slave: performing the work.
+    07-16 04:32:52.820  1199  1212 D nexec client: SyscallInputStream: numeric representation of the command is 46.
+    07-16 04:32:52.820  1199  1212 D nexec client: SyscallInputStream: command is CALL_WRITE.
+    07-16 04:32:52.820  1199  1212 D nexec client: SlaveHelper: read command: CALL_WRITE
+    07-16 04:32:52.820  1199  1212 I nexec client: Slave: write(fd=2, buf, nbytes=32)
+    07-16 04:32:52.820  1199  1212 I nexec client: SlaveHelper: result (generic64): retval=32
+    07-16 04:32:52.820  1199  1212 V nexec client: Slave: finished the work.
+    07-16 04:32:52.820  1199  1212 V nexec client: SlaveHub: works of the slave hub are being processed.
+    07-16 04:32:52.820  1199  1212 V nexec client: SlaveHub: the work for the slave is being processed.
+    07-16 04:32:52.820  1199  1212 D nexec client: SyscallInputStream: numeric representation of the command is 47.
+    07-16 04:32:52.820  1199  1212 D nexec client: SyscallInputStream: command is RET_WRITE.
+    07-16 04:32:52.820  1199  1212 D nexec client: SlaveHub: from the slave to the master: command=RET_WRITE, payloadSize=1
+    07-16 04:32:52.820  1199  1212 V nexec client: SlaveHub: the work for the slave was finished.
+    07-16 04:32:52.820  1199  1212 V nexec client: SlaveHub: works of the slave hub were finished.
+    07-16 04:32:52.940  1199  1212 V nexec client: SlaveHub: works of the slave hub are being processed.
+    07-16 04:32:52.940  1199  1212 V nexec client: SlaveHub: the work for the master hub is being processed.
+    07-16 04:32:52.940  1199  1212 D nexec client: SyscallInputStream: numeric representation of the command is 60.
+    07-16 04:32:52.940  1199  1212 D nexec client: SyscallInputStream: command is CALL_SELECT.
+    07-16 04:32:52.970  1199  1212 D nexec client: SlaveHub: command received: command=CALL_SELECT, pid=1826
+    07-16 04:32:52.970  1199  1212 D nexec client: SlaveHub: from the master to the slave: command=CALL_SELECT, payloadSize=8
+    07-16 04:32:52.970  1199  1212 V nexec client: SlaveHub: works of the slave hub were finished.
+    07-16 04:32:52.970  1199  1212 V nexec client: Slave: performing the work.
+    07-16 04:32:52.970  1199  1212 D nexec client: SyscallInputStream: numeric representation of the command is 60.
+    07-16 04:32:52.970  1199  1212 D nexec client: SyscallInputStream: command is CALL_SELECT.
+    07-16 04:32:52.970  1199  1212 D nexec client: SlaveHelper: read command: CALL_SELECT
+    07-16 04:32:52.970  1199  1212 I nexec client: Slave: select(nfds=1, in, ou, ex, timeout)
+    07-16 04:32:52.980  1199  1212 I nexec client: SlaveHelper: result (select): retval=0
+    07-16 04:32:52.980  1199  1212 V nexec client: Slave: finished the work.
+    07-16 04:32:52.980  1199  1212 V nexec client: SlaveHub: works of the slave hub are being processed.
+    07-16 04:32:52.980  1199  1212 V nexec client: SlaveHub: the work for the slave is being processed.
+    07-16 04:32:52.980  1199  1212 D nexec client: SyscallInputStream: numeric representation of the command is 61.
+    07-16 04:32:52.980  1199  1212 D nexec client: SyscallInputStream: command is RET_SELECT.
+    07-16 04:32:52.980  1199  1212 D nexec client: SlaveHub: from the slave to the master: command=RET_SELECT, payloadSize=1
+    07-16 04:32:52.980  1199  1212 V nexec client: SlaveHub: the work for the slave was finished.
+    07-16 04:32:52.980  1199  1212 V nexec client: SlaveHub: works of the slave hub were finished.
+    07-16 04:32:53.450  1199  1212 V nexec client: SlaveHub: works of the slave hub are being processed.
+    07-16 04:32:53.450  1199  1212 V nexec client: SlaveHub: the work for the master hub is being processed.
+
+But sometimes you can not see it. In this case, I am guessing that the problem
+is in `nexec client for Android`_. To recover from this phenomenon, stopping
+`nexec client for Android`_ may be usable with the following steps.
+
+1. Select "Apps" in the desktop
+2. Select "Settings"
+3. Select "Applications"
+4. Select "Running services"
+5. Select "All" tab
+6. Select "nexec client"
+7. Push "Force stop" and "OK"
+
 Anything else
 =============
 
