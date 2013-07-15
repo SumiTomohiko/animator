@@ -173,8 +173,9 @@ call requests and responses in this)::
     07-16 04:32:53.450  1199  1212 V nexec client: SlaveHub: the work for the master hub is being processed.
 
 But sometimes you can not see it. In this case, I am guessing that the problem
-is in `nexec client for Android`_. To recover from this phenomenon, stopping
-`nexec client for Android`_ may be usable with the following steps.
+is in `nexec client for Android`_ which does not finish the service correctly.
+To recover from this phenomenon, stopping `nexec client for Android`_ may be
+usable with the following steps.
 
 1. Select "Apps" in the desktop
 2. Select "Settings"
