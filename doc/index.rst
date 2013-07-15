@@ -82,7 +82,7 @@ fsyscall can crash easily. To avoid long time server down, the default nexec
 server (neko-daisuki.ddo.jp) reboots in every 15 minutes. The server informs its
 status in `Twitter`_.
 
-.. _Twitter: http://twritter.com/neko-daisuki
+.. _Twitter: https://twitter.com/info_neko_daisu
 
 Cannot remove one frame only.
 -----------------------------
