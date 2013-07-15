@@ -25,6 +25,11 @@ One example movie made by this application has been uploaded to `YouTube`_.
 
 .. _YouTube: http://www.youtube.com/watch?v=b0Ogk506ELw
 
+Supported tablet
+================
+
+I tested this application with Acer A500 (10inch tablet).
+
 Google play
 ===========
 
