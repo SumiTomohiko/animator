@@ -180,9 +180,18 @@ is in `nexec client for Android`_. To recover from this phenomenon, stopping
 2. Select "Settings"
 3. Select "Applications"
 4. Select "Running services"
+
+.. image:: running_services.png
+
 5. Select "All" tab
 6. Select "nexec client"
+
+.. image:: nexec_client.png
+
 7. Push "Force stop" and "OK"
+
+.. image:: force_stop.png
+.. image:: force_stop_dialog.png
 
 Anything else
 =============
