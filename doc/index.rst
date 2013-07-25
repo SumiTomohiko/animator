@@ -80,15 +80,6 @@ a few seconds).
 I recommend you to try only with two or three pictures at first to know how slow
 fsyscall is.
 
-fsyscall is not stable.
------------------------
-
-fsyscall can crash easily. To avoid long time server down, the default nexec
-server (neko-daisuki.ddo.jp) reboots in every 15 minutes. The server informs its
-status in `Twitter`_.
-
-.. _Twitter: https://twitter.com/info_neko_daisu
-
 Cannot remove one frame only.
 -----------------------------
 
