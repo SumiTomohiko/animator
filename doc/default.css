@@ -64,6 +64,10 @@ li > ul, li > ol {
     margin-left: 8px;
 }
 
+a img {
+    border-style: solid;
+}
+
 /**
  * vim: tabstop=4 shiftwidth=4 expandtab softtabstop=4
  */
