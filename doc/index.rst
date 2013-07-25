@@ -16,7 +16,8 @@ animator is an Android application to make stop motion movie.
 Screenshots
 ===========
 
-.. image:: screenshot.png
+.. image:: screenshot-thumb.png
+    :target: screenshot.png
 
 Example movie
 =============
@@ -173,17 +174,22 @@ usable with the following steps.
 3. Select "Applications"
 4. Select "Running services"
 
-.. image:: running_services.png
+.. image:: running_services-thumb.png
+    :target: running_services.png
 
 5. Select "All" tab
 6. Select "nexec client"
 
-.. image:: nexec_client.png
+.. image:: nexec_client-thumb.png
+    :target: nexec_client.png
 
 7. Push "Force stop" and "OK"
 
-.. image:: force_stop.png
-.. image:: force_stop_dialog.png
+.. image:: force_stop-thumb.png
+    :target: force_stop.png
+
+.. image:: force_stop_dialog-thumb.png
+    :target: force_stop_dialog.png
 
 Anything else
 =============

@@ -1,8 +1,13 @@
 .settings
 bin
 com.devsmart.android.ui
+doc/force_stop-thumb.png
+doc/force_stop_dialog-thumb.png
 doc/icon.png
 doc/index.html
+doc/nexec_client-thumb.png
+doc/running_services-thumb.png
+doc/screenshot-thumb.png
 gen
 ic_launcher-web.png
 jp.gr.java_conf.neko_daisuki.android.animator
