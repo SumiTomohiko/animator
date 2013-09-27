@@ -642,8 +642,7 @@ public class MainActivity extends FragmentActivity {
         String projectName = defaultName != null ? defaultName : "default";
         changeProject(projectName);
 
-        SurfaceHolder holder = mView.getHolder();
-        holder.addCallback(new SurfaceListener());
+        mView.getHolder().addCallback(new SurfaceListener());
         mCamera = Camera.open();
     }
 
