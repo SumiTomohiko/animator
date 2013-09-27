@@ -11,6 +11,7 @@
     <string name="action_select_project">Select another project</string>
     <string name="action_host_preference">Host preference...</string>
     <string name="action_watch_log">Watch log...</string>
+    <string name="action_watch_movie">Watch the movie...</string>
 
     <string name="dialog_clear_project">
         You are about to delete all of this project. Are you sure?

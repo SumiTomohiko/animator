@@ -21,6 +21,9 @@
     <item
         android:id="@+id/action_watch_log"
         android:title="@string/action_watch_log"/>
+    <item
+        android:id="@+id/action_watch_movie"
+        android:title="@string/action_watch_movie"/>
 </menu>
 <!--
 vim: tabstop=4 shiftwidth=4 expandtab softtabstop=4

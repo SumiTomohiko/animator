@@ -32,6 +32,7 @@ import android.graphics.BitmapFactory;
 import android.hardware.Camera.Parameters;
 import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.DialogFragment;
@@ -245,6 +246,16 @@ public class MainActivity extends FragmentActivity {
             Context ctx = MainActivity.this;
             Intent intent = new Intent(ctx, LogActivity.class);
             intent.putExtra(LogActivity.KEY_LOG_PATH, getLogPath());
+            startActivity(intent);
+        }
+    }
+
+    private class WatchMovieAction implements MenuAction {
+
+        public void run() {
+            Uri uri = Uri.parse(String.format("file://%s", getMoviePath()));
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            intent.setDataAndType(uri, "video/mp4");
             startActivity(intent);
         }
     }
@@ -618,9 +629,8 @@ public class MainActivity extends FragmentActivity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         menu.findItem(R.id.action_make_movie).setEnabled(0 < mFrames.size());
-
-        File logFile = new File(getLogPath());
-        menu.findItem(R.id.action_watch_log).setEnabled(logFile.exists());
+        disableMenu(menu, R.id.action_watch_log, getLogPath());
+        disableMenu(menu, R.id.action_watch_movie, getMoviePath());
 
         return true;
     }
@@ -659,6 +669,7 @@ public class MainActivity extends FragmentActivity {
                 R.id.action_host_preference, new HostPreferenceAction());
         mMenuActions.put(R.id.action_make_movie, new MakeMovieAction());
         mMenuActions.put(R.id.action_watch_log, new WatchLogAction());
+        mMenuActions.put(R.id.action_watch_movie, new WatchMovieAction());
         mMenuActions.put(android.R.id.home, new NopMenuAction());
     }
 
@@ -706,7 +717,7 @@ public class MainActivity extends FragmentActivity {
         return String.format("%s/%s-original.jpg", mProjectDirectory, id);
     }
 
-    private String getDestinationPath() {
+    private String getMoviePath() {
         return String.format("%s/movie.mp4", mProjectDirectory);
     }
 
@@ -743,7 +754,7 @@ public class MainActivity extends FragmentActivity {
         for (String id: mFrames) {
             files.add(getOriginalFilePath(id));
         }
-        files.add(getDestinationPath());
+        files.add(getMoviePath());
 
         return files.toArray(new String[0]);
     }
@@ -753,7 +764,7 @@ public class MainActivity extends FragmentActivity {
             "ffmpeg", "-loglevel", "quiet", "-y", "-r", mFrameRate.toString(),
             "-f", "image2", "-i",
             String.format("%s/%%d.jpg", mProjectDirectory), "-r", "24", "-s",
-            "xga", getDestinationPath() };
+            "xga", getMoviePath() };
     }
 
     private String getLogPath() {
@@ -968,6 +979,10 @@ public class MainActivity extends FragmentActivity {
 
     private void notifyDataSetChanged() {
         mAdapter.notifyDataSetChanged();
+    }
+
+    private void disableMenu(Menu menu, int id, String path) {
+        menu.findItem(id).setEnabled(new File(path).exists());
     }
 }
 
