@@ -475,7 +475,7 @@ public class MainActivity extends FragmentActivity {
 
         public void surfaceCreated(SurfaceHolder holder) {
             try {
-                mCamera.setPreviewDisplay(mView.getHolder());
+                mCamera.setPreviewDisplay(holder);
             }
             catch (IOException e) {
                 showException("failed to show preview", e);
