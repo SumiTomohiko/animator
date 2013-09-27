@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.io.Reader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -301,6 +302,8 @@ public class MainActivity extends FragmentActivity {
     private class OnFinishListener implements NexecClient.OnFinishListener {
 
         public void onFinish() {
+            mLogFile.close();
+            mLogFile = null;
             showToast("Finished.");
         }
     }
@@ -308,7 +311,7 @@ public class MainActivity extends FragmentActivity {
     private class OnGetLineListener implements NexecClient.OnGetLineListener {
 
         public void onGetLine(String s) {
-            showToast(s.trim());
+            mLogFile.print(s);
         }
     }
 
@@ -388,6 +391,15 @@ public class MainActivity extends FragmentActivity {
     private class OnConfirmOk implements ActivityResultDispatcher.Proc {
 
         public void run(Intent data) {
+            String path = getLogPath();
+            try {
+                mLogFile = new PrintWriter(path);
+            }
+            catch (FileNotFoundException e) {
+                String fmt = "cannot open log: %s";
+                showException(String.format(fmt, path), e);
+                return;
+            }
             mNexecClient.execute(data);
         }
     }
@@ -578,6 +590,7 @@ public class MainActivity extends FragmentActivity {
     private NexecClient mNexecClient;
     private ActivityResultDispatcher mActivityResultDispatcher;
     private SparseArray<MenuAction> mMenuActions;
+    private PrintWriter mLogFile;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -725,6 +738,10 @@ public class MainActivity extends FragmentActivity {
             "-f", "image2", "-i",
             String.format("%s/%%d.jpg", mProjectDirectory), "-r", "24", "-s",
             "xga", getDestinationPath() };
+    }
+
+    private String getLogPath() {
+        return String.format("%s/ffmpeg.log", mProjectDirectory);
     }
 
     private String getApplicationDirectory() {
