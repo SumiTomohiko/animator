@@ -487,9 +487,6 @@ public class MainActivity extends FragmentActivity {
         }
 
         public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-            String fmt = "the surface was changed: width=%d, height=%d.";
-            Log.d(TAG, String.format(fmt, width, height));
-
             mCamera.stopPreview();
             Parameters params = mCamera.getParameters();
             List<Camera.Size> sizes = params.getSupportedPreviewSizes();
