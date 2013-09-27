@@ -400,6 +400,7 @@ public class MainActivity extends FragmentActivity {
                 showException(String.format(fmt, path), e);
                 return;
             }
+            showToast("executing ffmpeg...");
             mNexecClient.execute(data);
         }
     }
