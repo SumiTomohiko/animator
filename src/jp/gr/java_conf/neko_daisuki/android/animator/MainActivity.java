@@ -467,6 +467,10 @@ public class MainActivity extends FragmentActivity {
     private class ShotButtonOnClickListener implements OnClickListener {
 
         public void onClick(View view) {
+            // People are saying that the internal buffer must be removed...
+            // http://stackoverflow.com/questions/7627921/android-camera-takepicture-does-not-return-some-times
+            // https://code.google.com/p/android/issues/detail?id=13966
+            mCamera.setPreviewCallback(null);
             mCamera.takePicture(null, null, mJpegCallback);
         }
     }
