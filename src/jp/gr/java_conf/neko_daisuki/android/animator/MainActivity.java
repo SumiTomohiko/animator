@@ -223,6 +223,12 @@ public class MainActivity extends FragmentActivity {
         public void run();
     }
 
+    private static class NopMenuAction implements MenuAction {
+
+        public void run() {
+        }
+    }
+
     private class RenameProjectAction implements MenuAction {
 
         public void run() {
@@ -617,6 +623,7 @@ public class MainActivity extends FragmentActivity {
         mMenuActions.put(
                 R.id.action_host_preference, new HostPreferenceAction());
         mMenuActions.put(R.id.action_make_movie, new MakeMovieAction());
+        mMenuActions.put(android.R.id.home, new NopMenuAction());
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
