@@ -659,7 +659,8 @@ public class MainActivity extends FragmentActivity {
     }
 
     private void showToast(String msg) {
-        Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+        String fmt = "animator: %s";
+        Toast.makeText(this, String.format(fmt, msg), Toast.LENGTH_LONG).show();
     }
 
     private String getThumbnailFilePath(String id) {
