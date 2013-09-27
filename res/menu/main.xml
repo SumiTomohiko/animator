@@ -18,6 +18,9 @@
     <item
         android:id="@+id/action_host_preference"
         android:title="@string/action_host_preference"/>
+    <item
+        android:id="@+id/action_watch_log"
+        android:title="@string/action_watch_log"/>
 </menu>
 <!--
 vim: tabstop=4 shiftwidth=4 expandtab softtabstop=4

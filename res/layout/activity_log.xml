@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<EditText
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/log_text"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="top"
+    android:editable="false"
+    android:typeface="monospace"/>
+<!--
+vim: tabstop=4 shiftwidth=4 expandtab softtabstop=4
+-->

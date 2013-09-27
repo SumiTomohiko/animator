@@ -239,6 +239,16 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
+    private class WatchLogAction implements MenuAction {
+
+        public void run() {
+            Context ctx = MainActivity.this;
+            Intent intent = new Intent(ctx, LogActivity.class);
+            intent.putExtra(LogActivity.KEY_LOG_PATH, getLogPath());
+            startActivity(intent);
+        }
+    }
+
     private class CreateProjectAction implements MenuAction {
 
         public void run() {
@@ -608,6 +618,10 @@ public class MainActivity extends FragmentActivity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         menu.findItem(R.id.action_make_movie).setEnabled(0 < mFrames.size());
+
+        File logFile = new File(getLogPath());
+        menu.findItem(R.id.action_watch_log).setEnabled(logFile.exists());
+
         return true;
     }
 
@@ -644,6 +658,7 @@ public class MainActivity extends FragmentActivity {
         mMenuActions.put(
                 R.id.action_host_preference, new HostPreferenceAction());
         mMenuActions.put(R.id.action_make_movie, new MakeMovieAction());
+        mMenuActions.put(R.id.action_watch_log, new WatchLogAction());
         mMenuActions.put(android.R.id.home, new NopMenuAction());
     }
 

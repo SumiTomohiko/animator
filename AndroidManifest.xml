@@ -21,6 +21,9 @@
         <activity
             android:name=".HostPreferenceActivity"
             android:label="@string/title_activity_host_preference"/>
+        <activity
+            android:name=".LogActivity"
+            android:label="@string/title_activity_log"/>
     </application>
 </manifest>
 <!--
