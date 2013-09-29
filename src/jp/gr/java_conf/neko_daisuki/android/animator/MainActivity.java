@@ -478,6 +478,7 @@ public class MainActivity extends FragmentActivity {
         private void saveThumbnail(String originalPath, String thumbnailPath) throws IOException {
             Bitmap bmp = BitmapFactory.decodeFile(originalPath);
             Bitmap thumb = Bitmap.createScaledBitmap(bmp, 320, 240, false);
+            bmp.recycle();
             OutputStream out = new FileOutputStream(thumbnailPath);
             try {
                 thumb.compress(CompressFormat.JPEG, 100, out);
