@@ -428,11 +428,25 @@ public class MainActivity extends FragmentActivity {
 
     private class Adapter extends BaseAdapter {
 
+        private class RemoveButtonListener implements OnClickListener {
+
+            private int mPosition;
+
+            public RemoveButtonListener(int position) {
+                mPosition = position;
+            }
+
+            public void onClick(View view) {
+                mFrames.remove(mPosition);
+                notifyDataSetChanged();
+            }
+        }
+
         public int getCount() {
             return mFrames.size();
         }
 
-		public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(int position, View convertView, ViewGroup parent) {
             String service = Context.LAYOUT_INFLATER_SERVICE;
             LayoutInflater inflater = (LayoutInflater)getSystemService(service);
             View view = inflater.inflate(R.layout.list_item, parent, false);
@@ -440,6 +454,9 @@ public class MainActivity extends FragmentActivity {
             ImageView img = (ImageView)view.findViewById(R.id.image);
             String path = getThumbnailFilePath(mFrames.get(position));
             img.setImageBitmap(BitmapFactory.decodeFile(path));
+
+            View button = view.findViewById(R.id.remove_button);
+            button.setOnClickListener(new RemoveButtonListener(position));
 
             return view;
         }

@@ -2,28 +2,39 @@
 <project>
     <import file="svg2png.xml"/>
     <macrodef name="svg2icon">
+        <attribute name="src"/>
         <attribute name="dest"/>
         <attribute name="size"/>
         <sequential>
-            <svg2png dest="@{dest}" src="ic_launcher.svg" size="@{size}"/>
+            <svg2png dest="@{dest}" src="@{src}" size="@{size}"/>
         </sequential>
     </macrodef>
     <macrodef name="svg2drawable">
+        <attribute name="name"/>
         <attribute name="dpi"/>
         <attribute name="size"/>
         <sequential>
             <svg2icon
-                dest="res/drawable-@{dpi}dpi/ic_launcher.png"
+                src="icon/@{name}.svg"
+                dest="res/drawable-@{dpi}dpi/@{name}.png"
                 size="@{size}"/>
+        </sequential>
+    </macrodef>
+    <macrodef name="svg2drawables">
+        <attribute name="name"/>
+        <sequential>
+            <svg2drawable name="@{name}" dpi="m" size="48"/>
+            <svg2drawable name="@{name}" dpi="h" size="72"/>
+            <svg2drawable name="@{name}" dpi="xh" size="96"/>
+            <svg2drawable name="@{name}" dpi="xxh" size="144"/>
         </sequential>
     </macrodef>
 
     <target name="icon">
-        <svg2drawable dpi="m" size="48"/>
-        <svg2drawable dpi="h" size="72"/>
-        <svg2drawable dpi="xh" size="96"/>
-        <svg2drawable dpi="xxh" size="144"/>
-        <svg2icon dest="ic_launcher-web.png" size="512"/>
+        <svg2drawables name="ic_launcher"/>
+        <svg2drawables name="ic_delete"/>
+        <svg2icon
+            src="icon/ic_launcher.svg" dest="ic_launcher-web.png" size="512"/>
     </target>
 </project>
 <!--

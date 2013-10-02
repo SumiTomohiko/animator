@@ -18,4 +18,4 @@ clean:
 doc:
 	@cd doc && $(MAKE)
 
-.PHONY: doc
+.PHONY: doc icon
