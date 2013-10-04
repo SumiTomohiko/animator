@@ -426,8 +426,8 @@ public class MainActivity extends FragmentActivity {
             mCameraParameters = new CameraParameters();
             String antibandingKey = CameraActivity.KEY_ANTIBANDING;
             String effectKey = CameraActivity.KEY_EFFECT;
-            String flashModeKey = CameraActivity.flashModeKey;
-            String focusModeKey = CameraActivity.focusModeKey;
+            String flashModeKey = CameraActivity.KEY_FLASH_MODE;
+            String focusModeKey = CameraActivity.KEY_FOCUS_MODE;
             String sceneModeKey = CameraActivity.KEY_SCENE_MODE;
             String wbKey = CameraActivity.KEY_WHITE_BALANCE;
             mCameraParameters.antibanding = data.getStringExtra(antibandingKey);
