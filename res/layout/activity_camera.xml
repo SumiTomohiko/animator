@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+        <SurfaceView
+            android:id="@+id/preview"
+            android:layout_width="320dip"
+            android:layout_height="wrap_content"/>
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:paddingLeft="8dip"
+            android:stretchColumns="0,1"
+            android:shrinkColumns="0,1">
+            <TableRow android:gravity="center_vertical">
+                <TextView android:text="Antibanding"/>
+                <TextView android:id="@+id/antibanding_text"/>
+                <ImageButton
+                    android:id="@+id/antibanding_button"
+                    android:padding="16dip"
+                    android:src="@drawable/ic_right_arrow"/>
+            </TableRow>
+            <TableRow android:gravity="center_vertical">
+                <TextView android:text="Color effect"/>
+                <TextView android:id="@+id/effect_text"/>
+                <ImageButton
+                    android:id="@+id/effect_button"
+                    android:padding="16dip"
+                    android:src="@drawable/ic_right_arrow"/>
+            </TableRow>
+            <TableRow android:gravity="center_vertical">
+                <TextView android:text="Flash mode"/>
+                <TextView android:id="@+id/flash_mode_text"/>
+                <ImageButton
+                    android:id="@+id/flash_mode_button"
+                    android:padding="16dip"
+                    android:src="@drawable/ic_right_arrow"/>
+            </TableRow>
+            <TableRow android:gravity="center_vertical">
+                <TextView android:text="Focus mode"/>
+                <TextView android:id="@+id/focus_mode_text"/>
+                <ImageButton
+                    android:id="@+id/focus_mode_button"
+                    android:padding="16dip"
+                    android:src="@drawable/ic_right_arrow"/>
+            </TableRow>
+            <TableRow android:gravity="center_vertical">
+                <TextView android:text="Scene mode"/>
+                <TextView android:id="@+id/scene_mode_text"/>
+                <ImageButton
+                    android:id="@+id/scene_mode_button"
+                    android:padding="16dip"
+                    android:src="@drawable/ic_right_arrow"/>
+            </TableRow>
+            <TableRow android:gravity="center_vertical">
+                <TextView android:text="White balance"/>
+                <TextView android:id="@+id/white_balance_text"/>
+                <ImageButton
+                    android:id="@+id/white_balance_button"
+                    android:padding="16dip"
+                    android:src="@drawable/ic_right_arrow"/>
+            </TableRow>
+        </TableLayout>
+        <ListView
+            android:id="@+id/params_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/positive_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/positive"/>
+        <Button
+            android:id="@+id/negative_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/negative"/>
+    </LinearLayout>
+</LinearLayout>
+<!--
+vim: tabstop=4 shiftwidth=4 expandtab softtabstop=4
+-->

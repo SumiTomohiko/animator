@@ -33,6 +33,7 @@
     <target name="icon">
         <svg2drawables name="ic_launcher"/>
         <svg2drawables name="ic_delete"/>
+        <svg2drawables name="ic_right_arrow"/>
         <svg2icon
             src="icon/ic_launcher.svg" dest="ic_launcher-web.png" size="512"/>
     </target>

@@ -19,6 +19,9 @@
         android:id="@+id/action_host_preference"
         android:title="@string/action_host_preference"/>
     <item
+        android:id="@+id/action_camera_settings"
+        android:title="@string/action_camera_settings"/>
+    <item
         android:id="@+id/action_watch_log"
         android:title="@string/action_watch_log"/>
     <item

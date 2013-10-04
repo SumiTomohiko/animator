@@ -13,11 +13,7 @@ ic_launcher-web.png
 jp.gr.java_conf.neko_daisuki.android.animator
 jp.gr.java_conf.neko_daisuki.android.nexec.client
 local.properties
-res/drawable-hdpi/ic_delete.png
-res/drawable-hdpi/ic_launcher.png
-res/drawable-mdpi/ic_delete.png
-res/drawable-mdpi/ic_launcher.png
-res/drawable-xhdpi/ic_delete.png
-res/drawable-xhdpi/ic_launcher.png
-res/drawable-xxhdpi/ic_delete.png
-res/drawable-xxhdpi/ic_launcher.png
+res/drawable-hdpi/*.png
+res/drawable-mdpi/*.png
+res/drawable-xhdpi/*.png
+res/drawable-xxhdpi/*.png

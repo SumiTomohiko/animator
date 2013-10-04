@@ -307,6 +307,27 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
+    private class CameraSettingsAction implements MenuAction {
+
+        public void run() {
+            Context ctx = MainActivity.this;
+            Intent intent = new Intent(ctx, CameraActivity.class);
+            intent.putExtra(CameraActivity.KEY_ANTIBANDING,
+                            mCameraParameters.antibanding);
+            intent.putExtra(CameraActivity.KEY_EFFECT,
+                            mCameraParameters.effect);
+            intent.putExtra(CameraActivity.KEY_FLASH_MODE,
+                            mCameraParameters.flashMode);
+            intent.putExtra(CameraActivity.KEY_FOCUS_MODE,
+                            mCameraParameters.focusMode);
+            intent.putExtra(CameraActivity.KEY_SCENE_MODE,
+                            mCameraParameters.sceneMode);
+            intent.putExtra(CameraActivity.KEY_WHITE_BALANCE,
+                            mCameraParameters.whiteBalance);
+            startActivityForResult(intent, REQUEST_CAMERA_SETTINGS);
+        }
+    }
+
     private class MakeMovieAction implements MenuAction {
 
         public void run() {
@@ -325,7 +346,7 @@ public class MainActivity extends FragmentActivity {
         public void onFinish() {
             mLogFile.close();
             mLogFile = null;
-            showToast("Finished.");
+            ActivityUtil.showToast(MainActivity.this, "Finished.");
         }
     }
 
@@ -399,6 +420,25 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
+    private class OnCameraSettings implements ActivityResultDispatcher.Proc {
+
+        public void run(Intent data) {
+            mCameraParameters = new CameraParameters();
+            String antibandingKey = CameraActivity.KEY_ANTIBANDING;
+            String effectKey = CameraActivity.KEY_EFFECT;
+            String flashModeKey = CameraActivity.flashModeKey;
+            String focusModeKey = CameraActivity.focusModeKey;
+            String sceneModeKey = CameraActivity.KEY_SCENE_MODE;
+            String wbKey = CameraActivity.KEY_WHITE_BALANCE;
+            mCameraParameters.antibanding = data.getStringExtra(antibandingKey);
+            mCameraParameters.effect = data.getStringExtra(effectKey);
+            mCameraParameters.flashMode = data.getStringExtra(flashModeKey);
+            mCameraParameters.focusMode = data.getStringExtra(focusModeKey);
+            mCameraParameters.sceneMode = data.getStringExtra(sceneModeKey);
+            mCameraParameters.whiteBalance = data.getStringExtra(wbKey);
+        }
+    }
+
     private class OnHostPreference implements ActivityResultDispatcher.Proc {
 
         public void run(Intent data) {
@@ -417,11 +457,11 @@ public class MainActivity extends FragmentActivity {
                 mLogFile = new PrintWriter(path);
             }
             catch (FileNotFoundException e) {
-                String fmt = "cannot open log: %s";
-                showException(String.format(fmt, path), e);
+                String msg = String.format("cannot open log: %s", path);
+                ActivityUtil.showException(MainActivity.this, msg, e);
                 return;
             }
-            showToast("executing ffmpeg...");
+            ActivityUtil.showToast(MainActivity.this, "executing ffmpeg...");
             mNexecClient.execute(data);
         }
     }
@@ -485,7 +525,8 @@ public class MainActivity extends FragmentActivity {
                 saveThumbnail(originalPath, thumbnailPath);
             }
             catch (IOException e) {
-                showException("failed to save", e);
+                String msg = "failed to save";
+                ActivityUtil.showException(MainActivity.this, msg, e);
                 return;
             }
 
@@ -534,31 +575,25 @@ public class MainActivity extends FragmentActivity {
                 mCamera.setPreviewDisplay(holder);
             }
             catch (IOException e) {
-                showException("failed to show preview", e);
+                String msg = "failed to show preview";
+                ActivityUtil.showException(MainActivity.this, msg, e);
             }
         }
 
         public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
             mCamera.stopPreview();
             Parameters params = mCamera.getParameters();
+
             List<Camera.Size> sizes = params.getSupportedPreviewSizes();
-
             Camera.Size bestSize = findBestPreviewSize(width, height, sizes);
-            shrinkView(mView, bestSize);
-
+            ViewUtil.resizeView(mView, bestSize);
             params.setPreviewSize(bestSize.width, bestSize.height);
+
             mCamera.setParameters(params);
             mCamera.startPreview();
         }
 
         public void surfaceDestroyed(SurfaceHolder holder) {
-        }
-
-        private void shrinkView(View view, Camera.Size size) {
-            ViewGroup.LayoutParams params = view.getLayoutParams();
-            params.width = size.width;
-            params.height = size.height;
-            view.setLayoutParams(params);
         }
 
         private Camera.Size findBestPreviewSize(int width, int height, List<Camera.Size> sizes) {
@@ -609,9 +644,67 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
+    private static class CameraParameters {
+
+        public String antibanding;
+        public String effect;
+        public String flashMode;
+        public String focusMode;
+        public String sceneMode;
+        public String whiteBalance;
+
+        public CameraParameters() {
+        }
+
+        public CameraParameters(Parameters params) {
+            List<String> supportedAntibanding;
+            supportedAntibanding = params.getSupportedAntibanding();
+            if (supportedAntibanding != null) {
+                antibanding = supportedAntibanding.get(0);
+            }
+
+            List<String> supportedColorEffects;
+            supportedColorEffects = params.getSupportedColorEffects();
+            if (supportedColorEffects != null) {
+                effect = supportedColorEffects.get(0);
+            }
+
+            List<String> supportedFlashModes = params.getSupportedFlashModes();
+            if (supportedFlashModes != null) {
+                flashMode = supportedFlashModes.get(0);
+            }
+
+            List<String> supportedFocusModes = params.getSupportedFocusModes();
+            if (supportedFocusModes != null) {
+                focusMode = supportedFocusModes.get(0);
+            }
+
+            List<String> supportedSceneModes = params.getSupportedSceneModes();
+            if (supportedSceneModes != null) {
+                sceneMode = supportedSceneModes.get(0);
+            }
+
+            List<String> supportedWhiteBalance;
+            supportedWhiteBalance = params.getSupportedWhiteBalance();
+            if (supportedWhiteBalance != null) {
+                whiteBalance = supportedWhiteBalance.get(0);
+            }
+        }
+
+        public void updateTo(Parameters params) {
+            CameraUtil.setAntibanding(params, antibanding);
+            CameraUtil.setEffect(params, effect);
+            CameraUtil.setFlashMode(params, flashMode);
+            CameraUtil.setFocusMode(params, focusMode);
+            CameraUtil.setSceneMode(params, sceneMode);
+            CameraUtil.setWhiteBalance(params, whiteBalance);
+        }
+    }
+
     private static final String TAG = "animator";
     private static final int REQUEST_CONFIRM = 0;
     private static final int REQUEST_HOST_PREFERENCE = 1;
+    private static final int REQUEST_CAMERA_SETTINGS = 2;
 
     // Document
     private String mProjectDirectory;
@@ -626,6 +719,7 @@ public class MainActivity extends FragmentActivity {
 
     // Helper
     private Camera mCamera;
+    private CameraParameters mCameraParameters;
     private PictureCallback mJpegCallback = new JpegCallback();
     private NexecClient mNexecClient;
     private ActivityResultDispatcher mActivityResultDispatcher;
@@ -677,6 +771,8 @@ public class MainActivity extends FragmentActivity {
                 REQUEST_CONFIRM, RESULT_OK, new OnConfirmOk());
         mActivityResultDispatcher.put(
                 REQUEST_HOST_PREFERENCE, RESULT_OK, new OnHostPreference());
+        mActivityResultDispatcher.put(
+                REQUEST_CAMERA_SETTINGS, RESULT_OK, new OnCameraSettings());
 
         mMenuActions = new SparseArray<MenuAction>();
         mMenuActions.put(R.id.action_create_project, new CreateProjectAction());
@@ -686,6 +782,8 @@ public class MainActivity extends FragmentActivity {
         mMenuActions.put(
                 R.id.action_host_preference, new HostPreferenceAction());
         mMenuActions.put(R.id.action_make_movie, new MakeMovieAction());
+        mMenuActions.put(R.id.action_camera_settings,
+                         new CameraSettingsAction());
         mMenuActions.put(R.id.action_watch_log, new WatchLogAction());
         mMenuActions.put(R.id.action_watch_movie, new WatchMovieAction());
         mMenuActions.put(android.R.id.home, new NopMenuAction());
@@ -705,6 +803,11 @@ public class MainActivity extends FragmentActivity {
 
         mView.getHolder().addCallback(new SurfaceListener());
         mCamera = Camera.open();
+        if (mCameraParameters == null) {
+            mCameraParameters = new CameraParameters(mCamera.getParameters());
+            readCameraParameters();
+        }
+        updateCameraParameters();
     }
 
     protected void onPause() {
@@ -713,18 +816,9 @@ public class MainActivity extends FragmentActivity {
         mCamera.stopPreview();
         mCamera.release();
 
+        writeCamera();
         writeProject();
         writeDefaultProjectName();
-    }
-
-    private void showException(String msg, Throwable e) {
-        e.printStackTrace();
-        showToast(String.format("%s: %s", msg, e.getMessage()));
-    }
-
-    private void showToast(String msg) {
-        String fmt = "animator: %s";
-        Toast.makeText(this, String.format(fmt, msg), Toast.LENGTH_LONG).show();
     }
 
     private String getThumbnailFilePath(String id) {
@@ -825,7 +919,8 @@ public class MainActivity extends FragmentActivity {
             }
         }
         catch (IOException e) {
-            showException(String.format("failed to read %s", path), e);
+            String msg = String.format("failed to read %s", path);
+            ActivityUtil.showException(this, msg, e);
         }
         return null;
     }
@@ -872,7 +967,8 @@ public class MainActivity extends FragmentActivity {
             mAdapter.notifyDataSetChanged();
         }
         catch (IOException e) {
-            showException(String.format("failed to read %s", path), e);
+            String msg = String.format("failed to read %s", path);
+            ActivityUtil.showException(this, msg, e);
         }
     }
 
@@ -905,7 +1001,8 @@ public class MainActivity extends FragmentActivity {
             }
         }
         catch (IOException e) {
-            showException(String.format("failed to write %s", path), e);
+            String msg = String.format("failed to write %s", path);
+            ActivityUtil.showException(this, msg, e);
         }
     }
 
@@ -928,7 +1025,8 @@ public class MainActivity extends FragmentActivity {
             }
         }
         catch (IOException e) {
-            showException(String.format("failed to write %s", path), e);
+            String msg = String.format("failed to write %s", path);
+            ActivityUtil.showException(this, msg, e);
         }
     }
 
@@ -950,7 +1048,8 @@ public class MainActivity extends FragmentActivity {
             }
         }
         catch (IOException e) {
-            showException(String.format("failed to write %s", path), e);
+            String msg = String.format("failed to write %s", path);
+            ActivityUtil.showException(this, msg, e);
         }
     }
 
@@ -987,7 +1086,8 @@ public class MainActivity extends FragmentActivity {
             }
         }
         catch (IOException e) {
-            showException(String.format("failed to read %s", path), e);
+            String msg = String.format("failed to read %s", path);
+            ActivityUtil.showException(this, msg, e);
         }
     }
 
@@ -1007,6 +1107,106 @@ public class MainActivity extends FragmentActivity {
 
     private void disableMenu(Menu menu, int id, String path) {
         menu.findItem(id).setEnabled(new File(path).exists());
+    }
+
+    private String getCameraPath() {
+        return String.format("%s/camera.json", getApplicationDirectory());
+    }
+
+    private void readCameraParameters() {
+        String path = getCameraPath();
+        Reader fileReader;
+        try {
+            fileReader = new FileReader(path);
+        }
+        catch (FileNotFoundException e) {
+            return;
+        }
+        try {
+            JsonReader reader = new JsonReader(fileReader);
+            try {
+                reader.beginObject();
+                while (reader.hasNext()) {
+                    String name = reader.nextName();
+                    String value = reader.nextString();
+                    if (name.equals("antibanding")) {
+                        mCameraParameters.antibanding = value;
+                    }
+                    else if (name.equals("effect")) {
+                        mCameraParameters.effect = value;
+                    }
+                    else if (name.equals("flash_mode")) {
+                        mCameraParameters.flashMode = value;
+                    }
+                    else if (name.equals("focus_mode")) {
+                        mCameraParameters.focusMode = value;
+                    }
+                    else if (name.equals("scene_mode")) {
+                        mCameraParameters.sceneMode = value;
+                    }
+                    else if (name.equals("white_balance")) {
+                        mCameraParameters.whiteBalance = value;
+                    }
+                }
+                reader.endObject();
+            }
+            finally {
+                reader.close();
+            }
+        }
+        catch (IOException e) {
+            String fmt = "failed to read camera settings: %s";
+            ActivityUtil.showException(this, String.format(fmt, path), e);
+        }
+    }
+
+    private void writeJsonValue(JsonWriter writer, String name, String value)
+    throws IOException {
+        if (value == null) {
+            return;
+        }
+        writer.name(name);
+        writer.value(value);
+    }
+
+    private void writeCamera() {
+        String path = getCameraPath();
+        try {
+            JsonWriter writer = makeJsonWriter(path);
+            try {
+                writer.beginObject();
+                writeJsonValue(writer,
+                               "antibanding",
+                               mCameraParameters.antibanding);
+                writeJsonValue(writer, "effect", mCameraParameters.effect);
+                writeJsonValue(writer,
+                               "flash_mode",
+                               mCameraParameters.flashMode);
+                writeJsonValue(writer,
+                               "focus_mode",
+                               mCameraParameters.focusMode);
+                writeJsonValue(writer,
+                               "scene_mode",
+                               mCameraParameters.sceneMode);
+                writeJsonValue(writer,
+                               "white_balance",
+                               mCameraParameters.whiteBalance);
+                writer.endObject();
+            }
+            finally {
+                writer.close();
+            }
+        }
+        catch (IOException e) {
+            String fmt = "failed to write camera settings: %s";
+            ActivityUtil.showException(this, String.format(fmt, path), e);
+        }
+    }
+
+    private void updateCameraParameters() {
+        Parameters params = mCamera.getParameters();
+        mCameraParameters.updateTo(params);
+        mCamera.setParameters(params);
     }
 }
 

@@ -24,6 +24,9 @@
         <activity
             android:name=".LogActivity"
             android:label="@string/title_activity_log"/>
+        <activity
+            android:name=".CameraActivity"
+            android:label="@string/title_activity_camera"/>
     </application>
 </manifest>
 <!--
