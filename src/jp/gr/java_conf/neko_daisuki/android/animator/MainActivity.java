@@ -880,10 +880,16 @@ public class MainActivity extends FragmentActivity {
         return String.format("%s/project.json", mProjectDirectory);
     }
 
+    private JsonWriter makeJsonWriter(String path) throws IOException {
+        JsonWriter writer = new JsonWriter(new FileWriter(path));
+        writer.setIndent("    ");
+        return writer;
+    }
+
     private void writeProject() {
         String path = getProjectJsonPath();
         try {
-            JsonWriter writer = new JsonWriter(new FileWriter(path));
+            JsonWriter writer = makeJsonWriter(path);
             try {
                 writer.beginObject();
                 writer.name("frames");
@@ -910,7 +916,7 @@ public class MainActivity extends FragmentActivity {
     private void writeHost(String host, int port) {
         String path = getHostJsonPath();
         try {
-            JsonWriter writer = new JsonWriter(new FileWriter(path));
+            JsonWriter writer = makeJsonWriter(path);
             try {
                 writer.beginObject();
                 writer.name("host").value(host);
@@ -933,7 +939,7 @@ public class MainActivity extends FragmentActivity {
     private void writeDefaultProjectName() {
         String path = getDefaultJsonPath();
         try {
-            JsonWriter writer = new JsonWriter(new FileWriter(path));
+            JsonWriter writer = makeJsonWriter(path);
             try {
                 writer.beginObject();
                 writer.name("name").value(getProjectName());
