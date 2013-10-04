@@ -4,12 +4,14 @@
     <string name="title_activity_host_preference">Host Preference</string>
     <string name="title_activity_log">Log</string>
     <string name="title_activity_camera">Camera Settings</string>
+    <string name="title_activity_project">Project Settings</string>
 
     <string name="action_make_movie">Make movie</string>
     <string name="action_create_project">Create a new project</string>
     <string name="action_rename_project">Rename this project</string>
     <string name="action_clear_project">Clear this project</string>
     <string name="action_open_project">Open another project</string>
+    <string name="action_project_settings">Project settings...</string>
     <string name="action_host_preference">Host preference...</string>
     <string name="action_camera_settings">Camera settings...</string>
     <string name="action_watch_log">Watch log...</string>

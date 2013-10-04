@@ -16,6 +16,9 @@
         android:id="@+id/action_open_project"
         android:title="@string/action_open_project"/>
     <item
+        android:id="@+id/action_project_settings"
+        android:title="@string/action_project_settings"/>
+    <item
         android:id="@+id/action_host_preference"
         android:title="@string/action_host_preference"/>
     <item

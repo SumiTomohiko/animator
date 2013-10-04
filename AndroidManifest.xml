@@ -27,6 +27,9 @@
         <activity
             android:name=".CameraActivity"
             android:label="@string/title_activity_camera"/>
+        <activity
+            android:name=".ProjectActivity"
+            android:label="@string/title_activity_project"/>
     </application>
 </manifest>
 <!--

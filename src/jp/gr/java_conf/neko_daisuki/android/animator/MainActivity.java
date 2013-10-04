@@ -304,6 +304,16 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
+    private class ProjectSettingsAction implements MenuAction {
+
+        public void run() {
+            Context ctx = MainActivity.this;
+            Intent intent = new Intent(ctx, ProjectActivity.class);
+            intent.putExtra(ProjectActivity.KEY_FPS, mFrameRate.toInteger());
+            startActivityForResult(intent, REQUEST_PROJECT_SETTINGS);
+        }
+    }
+
     private class CameraSettingsAction implements MenuAction {
 
         public void run() {
@@ -414,6 +424,14 @@ public class MainActivity extends FragmentActivity {
         private Proc getProc(int requestCode, int resultCode) {
             Proc proc = mMap.get(new ActivityResult(requestCode, resultCode));
             return proc != null ? proc : mFakeProc;
+        }
+    }
+
+    private class OnProjectSettings implements ActivityResultDispatcher.Proc {
+
+        public void run(Intent data) {
+            int fps = data.getIntExtra(ProjectActivity.KEY_FPS, 8);
+            mNewFrameRate = new FrameRate(fps);
         }
     }
 
@@ -668,6 +686,10 @@ public class MainActivity extends FragmentActivity {
         public String toString() {
             return Integer.toString(mRate);
         }
+
+        public int toInteger() {
+            return mRate;
+        }
     }
 
     private static class CameraParameters {
@@ -731,6 +753,7 @@ public class MainActivity extends FragmentActivity {
     private static final int REQUEST_CONFIRM = 0;
     private static final int REQUEST_HOST_PREFERENCE = 1;
     private static final int REQUEST_CAMERA_SETTINGS = 2;
+    private static final int REQUEST_PROJECT_SETTINGS = 3;
 
     // Document
     private String mProjectDirectory;
@@ -751,6 +774,7 @@ public class MainActivity extends FragmentActivity {
     private ActivityResultDispatcher mActivityResultDispatcher;
     private SparseArray<MenuAction> mMenuActions;
     private PrintWriter mLogFile;
+    private FrameRate mNewFrameRate;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -799,12 +823,18 @@ public class MainActivity extends FragmentActivity {
                 REQUEST_HOST_PREFERENCE, RESULT_OK, new OnHostPreference());
         mActivityResultDispatcher.put(
                 REQUEST_CAMERA_SETTINGS, RESULT_OK, new OnCameraSettings());
+        mActivityResultDispatcher.put(REQUEST_PROJECT_SETTINGS,
+                                      RESULT_OK,
+                                      new OnProjectSettings());
+
 
         mMenuActions = new SparseArray<MenuAction>();
         mMenuActions.put(R.id.action_create_project, new CreateProjectAction());
         mMenuActions.put(R.id.action_rename_project, new RenameProjectAction());
         mMenuActions.put(R.id.action_clear_project, new ClearProjectAction());
         mMenuActions.put(R.id.action_open_project, new OpenProjectAction());
+        mMenuActions.put(R.id.action_project_settings,
+                         new ProjectSettingsAction());
         mMenuActions.put(
                 R.id.action_host_preference, new HostPreferenceAction());
         mMenuActions.put(R.id.action_make_movie, new MakeMovieAction());
@@ -826,6 +856,9 @@ public class MainActivity extends FragmentActivity {
         String defaultName = readDefaultProjectName();
         String projectName = defaultName != null ? defaultName : "default";
         changeProject(projectName);
+        if (mNewFrameRate != null) {
+            mFrameRate = mNewFrameRate;
+        }
 
         mView.getHolder().addCallback(new SurfaceListener());
         mCamera = Camera.open();
@@ -983,6 +1016,9 @@ public class MainActivity extends FragmentActivity {
                         }
                         reader.endArray();
                     }
+                    else if (key.equals("frame_rate")) {
+                        mFrameRate = new FrameRate(reader.nextInt());
+                    }
                 }
                 reader.endObject();
             }
@@ -1020,6 +1056,7 @@ public class MainActivity extends FragmentActivity {
                     writer.value(id);
                 }
                 writer.endArray();
+                writer.name("frame_rate").value(mFrameRate.toInteger());
                 writer.endObject();
             }
             finally {
