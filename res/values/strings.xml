@@ -8,7 +8,7 @@
     <string name="action_create_project">Create a new project</string>
     <string name="action_rename_project">Rename this project</string>
     <string name="action_clear_project">Clear this project</string>
-    <string name="action_select_project">Select another project</string>
+    <string name="action_open_project">Open another project</string>
     <string name="action_host_preference">Host preference...</string>
     <string name="action_watch_log">Watch log...</string>
     <string name="action_watch_movie">Watch the movie...</string>

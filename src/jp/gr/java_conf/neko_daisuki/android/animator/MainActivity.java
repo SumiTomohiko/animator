@@ -279,7 +279,7 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
-    private class SelectProjectAction implements MenuAction {
+    private class OpenProjectAction implements MenuAction {
 
         public void run() {
             String[] projects = listProjects();
@@ -682,7 +682,7 @@ public class MainActivity extends FragmentActivity {
         mMenuActions.put(R.id.action_create_project, new CreateProjectAction());
         mMenuActions.put(R.id.action_rename_project, new RenameProjectAction());
         mMenuActions.put(R.id.action_clear_project, new ClearProjectAction());
-        mMenuActions.put(R.id.action_select_project, new SelectProjectAction());
+        mMenuActions.put(R.id.action_open_project, new OpenProjectAction());
         mMenuActions.put(
                 R.id.action_host_preference, new HostPreferenceAction());
         mMenuActions.put(R.id.action_make_movie, new MakeMovieAction());
