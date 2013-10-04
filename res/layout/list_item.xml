@@ -14,6 +14,13 @@
         android:layout_gravity="right"
         android:padding="4dip"
         android:src="@drawable/ic_delete"/>
+    <ImageButton
+        android:id="@+id/magnify_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:padding="4dip"
+        android:src="@drawable/ic_magnify"/>
 </FrameLayout>
 <!--
 vim: tabstop=4 shiftwidth=4 expandtab softtabstop=4

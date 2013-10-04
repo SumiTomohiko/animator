@@ -253,10 +253,7 @@ public class MainActivity extends FragmentActivity {
     private class WatchMovieAction implements MenuAction {
 
         public void run() {
-            Uri uri = Uri.parse(String.format("file://%s", getMoviePath()));
-            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-            intent.setDataAndType(uri, "video/mp4");
-            startActivity(intent);
+            showFile(getMoviePath(), "video/mp4");
         }
     }
 
@@ -468,17 +465,43 @@ public class MainActivity extends FragmentActivity {
 
     private class Adapter extends BaseAdapter {
 
-        private class RemoveButtonListener implements OnClickListener {
+        private abstract class PositionalButtonListener
+                implements OnClickListener {
 
             private int mPosition;
 
-            public RemoveButtonListener(int position) {
+            public PositionalButtonListener(int position) {
                 mPosition = position;
             }
 
             public void onClick(View view) {
-                mFrames.remove(mPosition);
+                run(mPosition);
+            }
+
+            protected abstract void run(int position);
+        }
+
+        private class RemoveButtonListener extends PositionalButtonListener {
+
+            public RemoveButtonListener(int position) {
+                super(position);
+            }
+
+            protected void run(int position) {
+                mFrames.remove(position);
                 notifyDataSetChanged();
+            }
+        }
+
+        private class MagnifyButtonListener extends PositionalButtonListener {
+
+            public MagnifyButtonListener(int position) {
+                super(position);
+            }
+
+            protected void run(int position) {
+                String path = getOriginalFilePath(mFrames.get(position));
+                showFile(path, "image/png");
             }
         }
 
@@ -495,8 +518,11 @@ public class MainActivity extends FragmentActivity {
             String path = getThumbnailFilePath(mFrames.get(position));
             img.setImageBitmap(BitmapFactory.decodeFile(path));
 
-            View button = view.findViewById(R.id.remove_button);
-            button.setOnClickListener(new RemoveButtonListener(position));
+            View removeButton = view.findViewById(R.id.remove_button);
+            removeButton.setOnClickListener(new RemoveButtonListener(position));
+            View magnifyButton = view.findViewById(R.id.magnify_button);
+            OnClickListener l = new MagnifyButtonListener(position);
+            magnifyButton.setOnClickListener(l);
 
             return view;
         }
@@ -1207,6 +1233,13 @@ public class MainActivity extends FragmentActivity {
         Parameters params = mCamera.getParameters();
         mCameraParameters.updateTo(params);
         mCamera.setParameters(params);
+    }
+
+    private void showFile(String path, String type) {
+        Uri uri = Uri.parse(String.format("file://%s", path));
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        intent.setDataAndType(uri, type);
+        startActivity(intent);
     }
 }
 
