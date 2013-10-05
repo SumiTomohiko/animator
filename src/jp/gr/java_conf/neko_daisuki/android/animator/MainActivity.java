@@ -131,6 +131,25 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
+    private interface CameraReader {
+
+        public void run();
+    }
+
+    private class NopCameraReader implements CameraReader {
+
+        public void run() {
+        }
+    }
+
+    private class DefaultCameraReader implements CameraReader {
+
+        public void run() {
+            mCameraParameters = new CameraParameters(mCamera.getParameters());
+            readCameraParameters();
+        }
+    }
+
     private abstract static class ProjectNameDialog extends DialogFragment {
 
         private class OnShowListener implements DialogInterface.OnShowListener {
@@ -451,6 +470,8 @@ public class MainActivity extends FragmentActivity {
             mCameraParameters.focusMode = data.getStringExtra(focusModeKey);
             mCameraParameters.sceneMode = data.getStringExtra(sceneModeKey);
             mCameraParameters.whiteBalance = data.getStringExtra(wbKey);
+
+            mCameraReader = new NopCameraReader();
         }
     }
 
@@ -775,6 +796,7 @@ public class MainActivity extends FragmentActivity {
     private SparseArray<MenuAction> mMenuActions;
     private PrintWriter mLogFile;
     private FrameRate mNewFrameRate;
+    private CameraReader mCameraReader = new DefaultCameraReader();
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -862,10 +884,7 @@ public class MainActivity extends FragmentActivity {
 
         mView.getHolder().addCallback(new SurfaceListener());
         mCamera = Camera.open();
-        if (mCameraParameters == null) {
-            mCameraParameters = new CameraParameters(mCamera.getParameters());
-            readCameraParameters();
-        }
+        mCameraReader.run();
         updateCameraParameters();
     }
 
