@@ -450,7 +450,7 @@ public class MainActivity extends FragmentActivity {
 
         public void run(Intent data) {
             int fps = data.getIntExtra(ProjectActivity.KEY_FPS, 8);
-            mNewFrameRate = new FrameRate(fps);
+            mFrameRateUpdater = new TrueFrameRateUpdater(new FrameRate(fps));
         }
     }
 
@@ -770,6 +770,30 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
+    private interface FrameRateUpdater {
+
+        public void run();
+    }
+
+    private class NopFrameRateUpdater implements FrameRateUpdater {
+
+        public void run() {
+        }
+    }
+
+    private class TrueFrameRateUpdater implements FrameRateUpdater {
+
+        private FrameRate mValue;
+
+        public TrueFrameRateUpdater(FrameRate value) {
+            mValue = value;
+        }
+
+        public void run() {
+            mFrameRate = mValue;
+        }
+    }
+
     private static final String TAG = "animator";
     private static final int REQUEST_CONFIRM = 0;
     private static final int REQUEST_HOST_PREFERENCE = 1;
@@ -795,7 +819,7 @@ public class MainActivity extends FragmentActivity {
     private ActivityResultDispatcher mActivityResultDispatcher;
     private SparseArray<MenuAction> mMenuActions;
     private PrintWriter mLogFile;
-    private FrameRate mNewFrameRate;
+    private FrameRateUpdater mFrameRateUpdater = new NopFrameRateUpdater();
     private CameraReader mCameraReader = new DefaultCameraReader();
 
     @Override
@@ -878,9 +902,7 @@ public class MainActivity extends FragmentActivity {
         String defaultName = readDefaultProjectName();
         String projectName = defaultName != null ? defaultName : "default";
         changeProject(projectName);
-        if (mNewFrameRate != null) {
-            mFrameRate = mNewFrameRate;
-        }
+        mFrameRateUpdater.run();
 
         mView.getHolder().addCallback(new SurfaceListener());
         mCamera = Camera.open();
