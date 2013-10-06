@@ -8,37 +8,61 @@ public class CameraUtil {
 
     public static void setAntibanding(Parameters params, String value) {
         List<String> supported = params.getSupportedAntibanding();
-        params.setAntibanding(getSupportedValue(supported, value));
+        String supportedValue = getSupportedValue(supported, value);
+        if (supportedValue == null) {
+            return;
+        }
+        params.setAntibanding(supportedValue);
     }
 
     public static void setEffect(Parameters params, String value) {
         List<String> supported = params.getSupportedColorEffects();
-        params.setColorEffect(getSupportedValue(supported, value));
+        String supportedValue = getSupportedValue(supported, value);
+        if (supportedValue == null) {
+            return;
+        }
+        params.setColorEffect(supportedValue);
     }
 
     public static void setFlashMode(Parameters params, String value) {
         List<String> supported = params.getSupportedFlashModes();
-        params.setFlashMode(getSupportedValue(supported, value));
+        String supportedValue = getSupportedValue(supported, value);
+        if (supportedValue == null) {
+            return;
+        }
+        params.setFlashMode(supportedValue);
     }
 
     public static void setFocusMode(Parameters params, String value) {
         List<String> supported = params.getSupportedFocusModes();
-        params.setFocusMode(getSupportedValue(supported, value));
+        String supportedValue = getSupportedValue(supported, value);
+        if (supportedValue == null) {
+            return;
+        }
+        params.setFocusMode(supportedValue);
     }
 
     public static void setSceneMode(Parameters params, String value) {
         List<String> supported = params.getSupportedSceneModes();
-        params.setSceneMode(getSupportedValue(supported, value));
+        String supportedValue = getSupportedValue(supported, value);
+        if (supportedValue == null) {
+            return;
+        }
+        params.setSceneMode(supportedValue);
     }
 
     public static void setWhiteBalance(Parameters params, String value) {
         List<String> supported = params.getSupportedWhiteBalance();
-        params.setWhiteBalance(getSupportedValue(supported, value));
+        String supportedValue = getSupportedValue(supported, value);
+        if (supportedValue == null) {
+            return;
+        }
+        params.setWhiteBalance(supportedValue);
     }
 
     private static String getSupportedValue(List<String> supported,
                                             String value) {
-        return supported.contains(value) ? value : null;
+        return (supported != null) && supported.contains(value) ? value : null;
     }
 }
 

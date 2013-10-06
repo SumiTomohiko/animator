@@ -262,25 +262,6 @@ public class CameraActivity extends FragmentActivity {
         mFocusModeText = findTextView(R.id.focus_mode_text);
         mSceneModeText = findTextView(R.id.scene_mode_text);
         mWhiteBalanceText = findTextView(R.id.white_balance_text);
-        mAntibandingText.setText(mAntibanding);
-        mEffectText.setText(mEffect);
-        mFlashModeText.setText(mFlashMode);
-        mFocusModeText.setText(mFocusMode);
-        mSceneModeText.setText(mSceneMode);
-        mWhiteBalanceText.setText(mWhiteBalance);
-
-        View antibandingButton = findViewById(R.id.antibanding_button);
-        View effectButton = findViewById(R.id.effect_button);
-        View flashModeButton = findViewById(R.id.flash_mode_button);
-        View focusModeButton = findViewById(R.id.focus_mode_button);
-        View sceneModeButton = findViewById(R.id.scene_mode_button);
-        View whiteBalanceButton = findViewById(R.id.white_balance_button);
-        antibandingButton.setOnClickListener(new AntibandingButtonListener());
-        effectButton.setOnClickListener(new EffectButtonListener());
-        flashModeButton.setOnClickListener(new FlashModeListener());
-        focusModeButton.setOnClickListener(new FocusModeListener());
-        sceneModeButton.setOnClickListener(new SceneModeListener());
-        whiteBalanceButton.setOnClickListener(new WhiteBalanceListener());
 
         int id = R.id.params_list;
         mParamsList = (AdapterView<ArrayAdapter<String>>)findViewById(id);
@@ -303,6 +284,50 @@ public class CameraActivity extends FragmentActivity {
         CameraUtil.setSceneMode(params, mSceneMode);
         CameraUtil.setWhiteBalance(params, mWhiteBalance);
         mCamera.setParameters(params);
+
+        boolean antibandingSupported = params.getSupportedAntibanding() != null;
+        boolean effectSupported = params.getSupportedColorEffects() != null;
+        boolean flashModeSupported = params.getSupportedFlashModes() != null;
+        boolean focusModeSupported = params.getSupportedFocusModes() != null;
+        boolean sceneModeSupported = params.getSupportedSceneModes() != null;
+        List<String> supportedWhiteBalance = params.getSupportedWhiteBalance();
+        boolean whiteBalanceSupported = supportedWhiteBalance != null;
+
+        String notSupported = "Not supported";
+        String s = antibandingSupported ? mAntibanding : notSupported;
+        mAntibandingText.setText(s);
+        mEffectText.setText(effectSupported ? mEffect : notSupported);
+        mFlashModeText.setText(flashModeSupported ? mFlashMode : notSupported);
+        mFocusModeText.setText(focusModeSupported ? mFocusMode : notSupported);
+        mSceneModeText.setText(sceneModeSupported ? mSceneMode : notSupported);
+        String t = whiteBalanceSupported ? mWhiteBalance : notSupported;
+        mWhiteBalanceText.setText(t);
+
+        View antibandingButton = findViewById(R.id.antibanding_button);
+        View effectButton = findViewById(R.id.effect_button);
+        View flashModeButton = findViewById(R.id.flash_mode_button);
+        View focusModeButton = findViewById(R.id.focus_mode_button);
+        View sceneModeButton = findViewById(R.id.scene_mode_button);
+        View whiteBalanceButton = findViewById(R.id.white_balance_button);
+
+        antibandingButton.setOnClickListener(
+                antibandingSupported ? new AntibandingButtonListener() : null);
+        antibandingButton.setEnabled(antibandingSupported);
+        effectButton.setOnClickListener(
+                effectSupported ? new EffectButtonListener() : null);
+        effectButton.setEnabled(effectSupported);
+        flashModeButton.setOnClickListener(
+                flashModeSupported ? new FlashModeListener() : null);
+        flashModeButton.setEnabled(flashModeSupported);
+        focusModeButton.setOnClickListener(
+                focusModeSupported ? new FocusModeListener() : null);
+        focusModeButton.setEnabled(focusModeSupported);
+        sceneModeButton.setOnClickListener(
+                sceneModeSupported ? new SceneModeListener() : null);
+        sceneModeButton.setEnabled(sceneModeSupported);
+        whiteBalanceButton.setOnClickListener(
+                whiteBalanceSupported ? new WhiteBalanceListener() : null);
+        whiteBalanceButton.setEnabled(whiteBalanceSupported);
     }
 
     protected void onPause() {
