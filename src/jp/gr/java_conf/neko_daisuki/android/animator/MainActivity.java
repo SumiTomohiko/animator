@@ -596,6 +596,8 @@ public class MainActivity extends FragmentActivity {
             }
 
             addFrame(fileId);
+
+            mCamera.startPreview();
         }
 
         private void saveThumbnail(String originalPath, String thumbnailPath) throws IOException {
