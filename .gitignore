@@ -13,6 +13,7 @@ gen
 ic_launcher-web.png
 jp.gr.java_conf.neko_daisuki.android.animator
 jp.gr.java_conf.neko_daisuki.android.nexec.client
+key.properties
 local.properties
 res/drawable-hdpi/*.png
 res/drawable-mdpi/*.png
