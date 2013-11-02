@@ -19,7 +19,8 @@
             android:id="@+id/shot_button"
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
-            android:src="@android:drawable/ic_menu_camera"/>
+            android:src="@android:drawable/ic_menu_camera"
+            android:contentDescription="@string/shot"/>
     </LinearLayout>
     <com.devsmart.android.ui.HorizontalListView
         android:id="@+id/list"
