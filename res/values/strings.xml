@@ -12,11 +12,11 @@
     <string name="action_rename_project">Rename this project</string>
     <string name="action_clear_project">Clear this project</string>
     <string name="action_open_project">Open another project</string>
-    <string name="action_project_settings">Project settings...</string>
-    <string name="action_host_preference">Host preference...</string>
-    <string name="action_camera_settings">Camera settings...</string>
-    <string name="action_watch_log">Watch log...</string>
-    <string name="action_watch_movie">Watch the movie...</string>
+    <string name="action_project_settings">Project settings&#8230;</string>
+    <string name="action_host_preference">Host preference&#8230;</string>
+    <string name="action_camera_settings">Camera settings&#8230;</string>
+    <string name="action_watch_log">Watch log&#8230;</string>
+    <string name="action_watch_movie">Watch the movie&#8230;</string>
 
     <string name="dialog_clear_project">
         You are about to delete all of this project. Are you sure?
