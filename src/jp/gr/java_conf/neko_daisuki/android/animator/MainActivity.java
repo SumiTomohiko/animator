@@ -793,7 +793,8 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
-    private static final String TAG = "animator";
+    //private static final String TAG = "animator";
+
     private static final int REQUEST_CONFIRM = 0;
     private static final int REQUEST_HOST_PREFERENCE = 1;
     private static final int REQUEST_CAMERA_SETTINGS = 2;
