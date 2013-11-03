@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE LinearLayout>
-<LinearLayout
+<!DOCTYPE RelativeLayout>
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,24 +8,29 @@
     <ListView
         android:id="@+id/list"
         android:layout_width="240dip"
-        android:layout_height="match_parent"/>
-    <LinearLayout
-        android:layout_width="0dip"
         android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:layout_alignParentLeft="true"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_above="@+id/shot_button"
+        android:layout_toRightOf="@+id/list">
         <SurfaceView
             android:id="@+id/preview"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-        <ImageButton
-            android:id="@+id/shot_button"
-            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_menu_camera"
-            android:contentDescription="@string/shot"/>
-    </LinearLayout>
-</LinearLayout>
+            android:layout_centerInParent="true"/>
+    </RelativeLayout>
+    <ImageButton
+        android:id="@+id/shot_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@+id/list"
+        android:src="@android:drawable/ic_menu_camera"
+        android:contentDescription="@string/shot"/>
+</RelativeLayout>
 <!--
 vim: tabstop=4 shiftwidth=4 expandtab softtabstop=4
 -->
