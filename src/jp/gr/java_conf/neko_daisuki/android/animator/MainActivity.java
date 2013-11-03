@@ -48,11 +48,11 @@ import android.view.SurfaceView;
 import android.view.View.OnClickListener;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 
-import com.devsmart.android.ui.HorizontalListView;
 import jp.gr.java_conf.neko_daisuki.android.nexec.client.NexecClient;
 
 public class MainActivity extends FragmentActivity {
@@ -850,7 +850,7 @@ public class MainActivity extends FragmentActivity {
 
         View shotButton = findViewById(R.id.shot_button);
         shotButton.setOnClickListener(new ShotButtonOnClickListener());
-        HorizontalListView list = (HorizontalListView)findViewById(R.id.list);
+        AdapterView<Adapter> list = (AdapterView<Adapter>)findViewById(R.id.list);
         mAdapter = new Adapter();
         list.setAdapter(mAdapter);
 
