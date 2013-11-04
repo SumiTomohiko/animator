@@ -873,6 +873,7 @@ public class MainActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        initializeApplicationDirectory();
 
         View shotButton = findViewById(R.id.shot_button);
         shotButton.setOnClickListener(new ShotButtonOnClickListener());
@@ -1048,6 +1049,20 @@ public class MainActivity extends FragmentActivity {
             ActivityUtil.showException(this, msg, e);
         }
         return null;
+    }
+
+    private void initializeApplicationDirectory() {
+        String dirpath = getApplicationDirectory();
+        new File(dirpath).mkdirs();
+
+        String nomedia = String.format("%s/.nomedia", dirpath);
+        try {
+            new File(nomedia).createNewFile();
+        }
+        catch (IOException e) {
+            String msg = String.format("failed to create %s", nomedia);
+            ActivityUtil.showException(this, msg, e);
+        }
     }
 
     private void changeProject(String name) {
