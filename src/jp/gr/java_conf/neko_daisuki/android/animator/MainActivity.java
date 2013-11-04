@@ -899,7 +899,6 @@ public class MainActivity extends FragmentActivity {
                                       RESULT_OK,
                                       new OnProjectSettings());
 
-
         mMenuActions = new SparseArray<MenuAction>();
         mMenuActions.put(R.id.action_create_project, new CreateProjectAction());
         mMenuActions.put(R.id.action_rename_project, new RenameProjectAction());
