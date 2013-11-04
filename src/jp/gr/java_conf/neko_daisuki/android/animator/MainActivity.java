@@ -881,6 +881,7 @@ public class MainActivity extends FragmentActivity {
         list.setAdapter(mAdapter);
 
         mView = (SurfaceView)findViewById(R.id.preview);
+        mView.getHolder().addCallback(new SurfaceListener());
 
         mNexecClient = new NexecClient(this);
         OnGetLineListener outListener = new OnGetLineListener();
@@ -929,7 +930,6 @@ public class MainActivity extends FragmentActivity {
         changeProject(projectName);
         mFrameRateUpdater.run();
 
-        mView.getHolder().addCallback(new SurfaceListener());
         mCamera = Camera.open();
         mCameraReader.run();
         updateCameraParameters();
