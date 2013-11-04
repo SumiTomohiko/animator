@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_toRightOf="@+id/list"
-        android:src="@android:drawable/ic_menu_camera"
+        android:src="@drawable/ic_shot"
         android:contentDescription="@string/shot"/>
 </RelativeLayout>
 <!--

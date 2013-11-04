@@ -36,6 +36,7 @@
         <svg2drawables name="ic_delete"/>
         <svg2drawables name="ic_magnify"/>
         <svg2drawables name="ic_right_arrow"/>
+        <svg2drawables name="ic_shot"/>
         <svg2icon
             src="icon/ic_launcher.svg" dest="ic_launcher-web.png" size="512"/>
     </target>
