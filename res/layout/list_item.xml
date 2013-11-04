@@ -19,7 +19,7 @@
         android:id="@+id/magnify_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|right"
+        android:layout_gravity="bottom|left"
         android:padding="4dip"
         android:src="@drawable/ic_magnify"/>
 </FrameLayout>
