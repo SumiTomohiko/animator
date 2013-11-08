@@ -1072,7 +1072,7 @@ public class MainActivity extends FragmentActivity {
          * When a user changes the project, the following statement is unneeded.
          * But it is harmless, too. So I placed it here to simplify the code.
          */
-        new File(mProjectDirectory).mkdirs();
+        new File(mProjectDirectory).mkdir();
 
         mFrames.clear();
 
