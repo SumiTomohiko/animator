@@ -20,8 +20,8 @@
         android:id="@+id/action_project_settings"
         android:title="@string/action_project_settings"/>
     <item
-        android:id="@+id/action_host_preference"
-        android:title="@string/action_host_preference"/>
+        android:id="@+id/action_host_settings"
+        android:title="@string/action_host_settings"/>
     <item
         android:id="@+id/action_camera_settings"
         android:title="@string/action_camera_settings"/>

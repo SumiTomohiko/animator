@@ -300,7 +300,7 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
-    private class HostPreferenceAction implements MenuAction {
+    private class HostSettingsAction implements MenuAction {
 
         public void run() {
             Context ctx = MainActivity.this;
@@ -938,8 +938,7 @@ public class MainActivity extends FragmentActivity {
         mMenuActions.put(R.id.action_open_project, new OpenProjectAction());
         mMenuActions.put(R.id.action_project_settings,
                          new ProjectSettingsAction());
-        mMenuActions.put(
-                R.id.action_host_preference, new HostPreferenceAction());
+        mMenuActions.put(R.id.action_host_settings, new HostSettingsAction());
         mMenuActions.put(R.id.action_make_movie, new MakeMovieAction());
         mMenuActions.put(R.id.action_camera_settings,
                          new CameraSettingsAction());

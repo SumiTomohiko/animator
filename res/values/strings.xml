@@ -13,7 +13,7 @@
     <string name="action_clear_project">Clear this project</string>
     <string name="action_open_project">Open another project</string>
     <string name="action_project_settings">Project settings&#8230;</string>
-    <string name="action_host_preference">Host preference&#8230;</string>
+    <string name="action_host_settings">Host settings#8230;</string>
     <string name="action_camera_settings">Camera settings&#8230;</string>
     <string name="action_watch_log">Watch log&#8230;</string>
     <string name="action_watch_movie">Watch the movie&#8230;</string>
