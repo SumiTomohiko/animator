@@ -129,6 +129,13 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
+    private class FocusButtonListener implements OnClickListener {
+
+        public void onClick(View view) {
+            mCamera.autoFocus(null);
+        }
+    }
+
     private class FocusAreaListener implements FocusAreaView.OnAreaChangedListener {
 
         public void onAreaChanged(FocusAreaView view, List<Camera.Area> areas) {
@@ -891,6 +898,9 @@ public class MainActivity extends FragmentActivity {
         AdapterView<Adapter> list = (AdapterView<Adapter>)findViewById(R.id.list);
         mAdapter = new Adapter();
         list.setAdapter(mAdapter);
+
+        View focusButton = findViewById(R.id.focus_button);
+        focusButton.setOnClickListener(new FocusButtonListener());
 
         mView = (SurfaceView)findViewById(R.id.preview);
         mView.getHolder().addCallback(new SurfaceListener());

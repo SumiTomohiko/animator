@@ -24,7 +24,9 @@
 
     <string name="positive">Okay</string>
     <string name="negative">Cancel</string>
+
     <string name="shot">Shot</string>
+    <string name="focus">Focus</string>
 </resources>
 <!--
 vim: tabstop=4 shiftwidth=4 expandtab softtabstop=4
