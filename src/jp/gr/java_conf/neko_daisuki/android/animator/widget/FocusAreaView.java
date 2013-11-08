@@ -28,104 +28,24 @@ public class FocusAreaView extends View {
         }
     }
 
-    private interface Helper {
-
-        public List<Camera.Area> computeFocusAreas(float x, float y);
-        public List<Camera.Area> computeInitialAreas();
-        public void draw(Canvas canvas);
-    }
-
-    private class DisabledHelper implements Helper {
-
-        public List<Camera.Area> computeFocusAreas(float x, float y) {
-            return null;
-        }
-
-        public List<Camera.Area> computeInitialAreas() {
-            return null;
-        }
-
-        public void draw(Canvas canvas) {
-            // Does nothing.
-        }
-    }
-
-    private class EnabledHelper implements Helper {
-
-        private Paint mBorderPaint = new Paint();
-        private Paint mOutlinePaint = new Paint();
-
-        public EnabledHelper() {
-            mBorderPaint.setARGB(255, 0, 0, 0);
-            mBorderPaint.setStyle(Paint.Style.STROKE);
-            mBorderPaint.setStrokeWidth(3);
-            mOutlinePaint.setARGB(255, 255, 255, 255);
-            mOutlinePaint.setStyle(Paint.Style.STROKE);
-            mOutlinePaint.setStrokeWidth(7);
-        }
-
-        public List<Camera.Area> computeFocusAreas(float x, float y) {
-            final float VIEW_SIZE = 2000f;
-            final float OFFSET = - VIEW_SIZE / 2;
-            float areaX = x / getWidth() * VIEW_SIZE + OFFSET;
-            float areaY = y / getHeight() * VIEW_SIZE + OFFSET;
-
-            final float HALF_SIZE = AREA_SIZE / 2;
-            Rect rect = new Rect();
-            rect.left = (int)(areaX - HALF_SIZE);
-            rect.top = (int)(areaY - HALF_SIZE);
-            rect.right = (int)(areaX + HALF_SIZE);
-            rect.bottom = (int)(areaY + HALF_SIZE);
-
-            return newAreas(rect);
-        }
-
-        public List<Camera.Area> computeInitialAreas() {
-            int size = (int)AREA_HALF_SIZE;
-            Rect rect = new Rect();
-            rect.left = rect.top = - size;
-            rect.right = rect.bottom = size;
-            return newAreas(rect);
-        }
-
-        public void draw(Canvas canvas) {
-            Rect rect = mAreas.get(0).rect;
-            final float SIZE = 1000f;
-            int halfHeight = getHeight() / 2;
-            int halfWidth = getWidth() / 2;
-            float left = halfWidth + rect.left / SIZE * halfWidth;
-            float top = halfHeight + rect.top / SIZE * halfHeight;
-            float right = halfWidth + rect.right / SIZE * halfWidth;
-            float bottom = halfHeight + rect.bottom / SIZE * halfHeight;
-            canvas.drawRect(left, top, right, bottom, mOutlinePaint);
-            canvas.drawRect(left, top, right, bottom, mBorderPaint);
-        }
-
-        private List<Camera.Area> newAreas(Rect rect) {
-            List<Camera.Area> areas = new LinkedList<Camera.Area>();
-            areas.add(new Camera.Area(rect, 1000));
-            return areas;
-        }
-    }
-
     private class MotionUpHandler implements MotionEventDispatcher.Proc {
 
         public boolean run(MotionEvent event) {
-            setAreas(mHelper.computeFocusAreas(event.getX(), event.getY()));
+            setAreas(computeFocusAreas(event.getX(), event.getY()));
             return true;
         }
     }
 
     private static final float AREA_SIZE = 100f;
-    private static final float AREA_HALF_SIZE = AREA_SIZE / 2;
 
     // documents
     private View mSurfaceView;
     private OnAreaChangedListener mListener;
     private List<Camera.Area> mAreas;
+    private Paint mBorderPaint = new Paint();
+    private Paint mOutlinePaint = new Paint();
     // helpers
     private MotionEventDispatcher mDispatcher = new MotionEventDispatcher();
-    private Helper mHelper;
 
     public FocusAreaView(Context context) {
         super(context);
@@ -151,12 +71,6 @@ public class FocusAreaView extends View {
         return true;
     }
 
-    public void setEnabled(boolean enabled) {
-        setHelper(enabled);
-        initializeAreas();
-        mDispatcher.setUpProc(enabled ? new MotionUpHandler() : null);
-    }
-
     public void setOnAreaChangedListener(OnAreaChangedListener l) {
         mListener = l != null ? l : new NopListener();
     }
@@ -167,11 +81,29 @@ public class FocusAreaView extends View {
     }
 
     protected void onDraw(Canvas canvas) {
-        mHelper.draw(canvas);
+        Rect rect = mAreas.get(0).rect;
+        final float SIZE = 1000f;
+        int halfHeight = getHeight() / 2;
+        int halfWidth = getWidth() / 2;
+        float left = halfWidth + rect.left / SIZE * halfWidth;
+        float top = halfHeight + rect.top / SIZE * halfHeight;
+        float right = halfWidth + rect.right / SIZE * halfWidth;
+        float bottom = halfHeight + rect.bottom / SIZE * halfHeight;
+        canvas.drawRect(left, top, right, bottom, mOutlinePaint);
+        canvas.drawRect(left, top, right, bottom, mBorderPaint);
+    }
+
+    private List<Camera.Area> computeInitialAreas() {
+        final float AREA_HALF_SIZE = AREA_SIZE / 2;
+        int size = (int)AREA_HALF_SIZE;
+        Rect rect = new Rect();
+        rect.left = rect.top = - size;
+        rect.right = rect.bottom = size;
+        return newAreas(rect);
     }
 
     private void initializeAreas() {
-        setAreas(mHelper.computeInitialAreas());
+        setAreas(computeInitialAreas());
     }
 
     private void setAreas(List<Camera.Area> areas) {
@@ -181,11 +113,40 @@ public class FocusAreaView extends View {
 
     private void initialize() {
         setOnAreaChangedListener(null);
-        setEnabled(true);
+        initializeAreas();
+        mDispatcher.setUpProc(new MotionUpHandler());
+        initializePaints();
     }
 
-    private void setHelper(boolean enabled) {
-        mHelper = enabled ? new EnabledHelper() : new DisabledHelper();
+    private List<Camera.Area> newAreas(Rect rect) {
+        List<Camera.Area> areas = new LinkedList<Camera.Area>();
+        areas.add(new Camera.Area(rect, 1000));
+        return areas;
+    }
+
+    private List<Camera.Area> computeFocusAreas(float x, float y) {
+        final float VIEW_SIZE = 2000f;
+        final float OFFSET = - VIEW_SIZE / 2;
+        float areaX = x / getWidth() * VIEW_SIZE + OFFSET;
+        float areaY = y / getHeight() * VIEW_SIZE + OFFSET;
+
+        final float HALF_SIZE = AREA_SIZE / 2;
+        Rect rect = new Rect();
+        rect.left = (int)(areaX - HALF_SIZE);
+        rect.top = (int)(areaY - HALF_SIZE);
+        rect.right = (int)(areaX + HALF_SIZE);
+        rect.bottom = (int)(areaY + HALF_SIZE);
+
+        return newAreas(rect);
+    }
+
+    private void initializePaints() {
+        mBorderPaint.setARGB(255, 0, 0, 0);
+        mBorderPaint.setStyle(Paint.Style.STROKE);
+        mBorderPaint.setStrokeWidth(3);
+        mOutlinePaint.setARGB(255, 255, 255, 255);
+        mOutlinePaint.setStyle(Paint.Style.STROKE);
+        mOutlinePaint.setStrokeWidth(7);
     }
 }
 
