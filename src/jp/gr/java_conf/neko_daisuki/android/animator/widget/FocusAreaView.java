@@ -120,6 +120,7 @@ public class FocusAreaView extends View {
     private static final float AREA_HALF_SIZE = AREA_SIZE / 2;
 
     // documents
+    private boolean mEnabled;
     private View mSurfaceView;
     private OnAreaChangedListener mListener;
     private List<Camera.Area> mAreas;
@@ -152,9 +153,14 @@ public class FocusAreaView extends View {
     }
 
     public void setEnabled(boolean enabled) {
+        mEnabled = enabled;
         setHelper(enabled);
         initializeAreas();
         mDispatcher.setUpProc(enabled ? new MotionUpHandler() : null);
+    }
+
+    public boolean getEnabled() {
+        return mEnabled;
     }
 
     public void setOnAreaChangedListener(OnAreaChangedListener l) {
