@@ -154,6 +154,7 @@ public class FocusAreaView extends View {
     public void setEnabled(boolean enabled) {
         setHelper(enabled);
         initializeAreas();
+        mDispatcher.setUpProc(enabled ? new MotionUpHandler() : null);
     }
 
     public void setOnAreaChangedListener(OnAreaChangedListener l) {
@@ -179,17 +180,12 @@ public class FocusAreaView extends View {
     }
 
     private void initialize() {
-        initializeDispatcher();
         setOnAreaChangedListener(null);
         setEnabled(true);
     }
 
     private void setHelper(boolean enabled) {
         mHelper = enabled ? new EnabledHelper() : new DisabledHelper();
-    }
-
-    private void initializeDispatcher() {
-        mDispatcher.setUpProc(new MotionUpHandler());
     }
 }
 
