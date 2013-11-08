@@ -33,12 +33,6 @@
         android:layout_alignParentBottom="true"
         android:layout_toRightOf="@+id/list">
         <ImageButton
-            android:id="@+id/focus_area_setting_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_crosshairs_settings"
-            android:contentDescription="@string/focus_settings"/>
-        <ImageButton
             android:id="@+id/focus_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

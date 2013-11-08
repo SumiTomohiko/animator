@@ -58,52 +58,6 @@ import jp.gr.java_conf.neko_daisuki.android.nexec.client.NexecClient;
 
 public class MainActivity extends FragmentActivity {
 
-    public static class FocusAreaSettingDialog extends DialogFragment {
-
-        private class ListListener implements DialogInterface.OnClickListener {
-
-            public void onClick(DialogInterface dialog, int which) {
-                mSelectedItem = which;
-            }
-        }
-
-        private class OkayButtonListener implements DialogInterface.OnClickListener {
-
-            public void onClick(DialogInterface dialog, int which) {
-                MainActivity activity = (MainActivity)getActivity();
-                activity.mFocusAreaView.setEnabled(mSelectedItem == 1);
-            }
-        }
-
-        private static final String KEY_ENABLED = "enabled";
-
-        private int mSelectedItem;
-
-        public static FocusAreaSettingDialog newInstance(boolean enabled) {
-            FocusAreaSettingDialog dialog = new FocusAreaSettingDialog();
-            Bundle args = new Bundle();
-            args.putBoolean(KEY_ENABLED, enabled);
-            dialog.setArguments(args);
-            return dialog;
-        }
-
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            mSelectedItem = getArguments().getBoolean(KEY_ENABLED) ? 1 : 0;
-
-            CharSequence[] items = new String[] { "Automatic", "Manual" };
-            ListListener l = new ListListener();
-
-            Activity activity = getActivity();
-            Builder builder = new Builder(activity);
-            builder.setTitle("How to give a focus area is");
-            builder.setSingleChoiceItems(items, mSelectedItem, l);
-            builder.setPositiveButton("Okay", new OkayButtonListener());
-            builder.setNegativeButton("Cancel", null);
-
-            return builder.create();
-        }
-    }
-
     public static class ClearProjectDialog extends DialogFragment {
 
         private class OkeyButtonOnClickListener implements DialogInterface.OnClickListener {
@@ -297,15 +251,6 @@ public class MainActivity extends FragmentActivity {
         protected void onOkey(MainActivity activity, String name) {
             activity.writeProject();
             activity.changeProject(name);
-        }
-    }
-
-    private class FocusAreaSettingButtonListener implements View.OnClickListener {
-
-        public void onClick(View view) {
-            boolean enabled = mFocusAreaView.getEnabled();
-            DialogFragment dialog = FocusAreaSettingDialog.newInstance(enabled);
-            dialog.show(getSupportFragmentManager(), "dialog");
         }
     }
 
@@ -904,7 +849,6 @@ public class MainActivity extends FragmentActivity {
     private int mPort = 57005;
 
     // View
-    private FocusAreaView mFocusAreaView;
     private SurfaceView mView;
     private Adapter mAdapter;
 
@@ -955,16 +899,15 @@ public class MainActivity extends FragmentActivity {
         mAdapter = new Adapter();
         list.setAdapter(mAdapter);
 
-        View focusAreaSettingButton = findViewById(R.id.focus_area_setting_button);
-        focusAreaSettingButton.setOnClickListener(new FocusAreaSettingButtonListener());
         View focusButton = findViewById(R.id.focus_button);
         focusButton.setOnClickListener(new FocusButtonListener());
 
         mView = (SurfaceView)findViewById(R.id.preview);
         mView.getHolder().addCallback(new SurfaceListener());
-        mFocusAreaView = (FocusAreaView)findViewById(R.id.focus_area_view);
-        mFocusAreaView.setSurfaceView(mView);
-        mFocusAreaView.setOnAreaChangedListener(new FocusAreaListener());
+        int id = R.id.focus_area_view;
+        FocusAreaView focusAreaView = (FocusAreaView)findViewById(id);
+        focusAreaView.setSurfaceView(mView);
+        focusAreaView.setOnAreaChangedListener(new FocusAreaListener());
 
         mNexecClient = new NexecClient(this);
         OnGetLineListener outListener = new OnGetLineListener();

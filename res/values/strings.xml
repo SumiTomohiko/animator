@@ -27,7 +27,6 @@
 
     <string name="shot">Shot</string>
     <string name="focus">Focus</string>
-    <string name="focus_settings">Focus settings</string>
 </resources>
 <!--
 vim: tabstop=4 shiftwidth=4 expandtab softtabstop=4
