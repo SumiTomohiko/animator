@@ -10,26 +10,36 @@
         android:layout_width="240dip"
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true"/>
-    <RelativeLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
-        android:layout_above="@+id/shot_button"
+        android:layout_above="@+id/buttons"
         android:layout_toRightOf="@+id/list">
         <SurfaceView
             android:id="@+id/preview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"/>
-    </RelativeLayout>
-    <ImageButton
-        android:id="@+id/shot_button"
+            android:layout_gravity="center"/>
+        <jp.gr.java_conf.neko_daisuki.android.animator.widget.FocusAreaView
+            android:id="@+id/focus_area_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </FrameLayout>
+    <LinearLayout
+        android:id="@+id/buttons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_toRightOf="@+id/list"
-        android:src="@drawable/ic_shot"
-        android:contentDescription="@string/shot"/>
+        android:layout_toRightOf="@+id/list">
+        <ImageButton
+            android:id="@+id/shot_button"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/ic_shot"
+            android:contentDescription="@string/shot"/>
+    </LinearLayout>
 </RelativeLayout>
 <!--
 vim: tabstop=4 shiftwidth=4 expandtab softtabstop=4

@@ -53,6 +53,7 @@ import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import jp.gr.java_conf.neko_daisuki.android.animator.widget.FocusAreaView;
 import jp.gr.java_conf.neko_daisuki.android.nexec.client.NexecClient;
 
 public class MainActivity extends FragmentActivity {
@@ -125,6 +126,16 @@ public class MainActivity extends FragmentActivity {
             builder.setNegativeButton("Cancel", null);
 
             return builder.create();
+        }
+    }
+
+    private class FocusAreaListener implements FocusAreaView.OnAreaChangedListener {
+
+        public void onAreaChanged(FocusAreaView view, List<Camera.Area> areas) {
+            Parameters params = mCamera.getParameters();
+            params.setFocusAreas(areas);
+            mCamera.setParameters(params);
+            mCamera.autoFocus(null);
         }
     }
 
@@ -883,6 +894,10 @@ public class MainActivity extends FragmentActivity {
 
         mView = (SurfaceView)findViewById(R.id.preview);
         mView.getHolder().addCallback(new SurfaceListener());
+        int id = R.id.focus_area_view;
+        FocusAreaView focusAreaView = (FocusAreaView)findViewById(id);
+        focusAreaView.setSurfaceView(mView);
+        focusAreaView.setOnAreaChangedListener(new FocusAreaListener());
 
         mNexecClient = new NexecClient(this);
         OnGetLineListener outListener = new OnGetLineListener();

@@ -6,7 +6,7 @@
     android:versionCode="10"
     android:versionName="1.0.0dev10">
     <!-- JsonReader and JsonWriter require SDL level 11 -->
-    <uses-sdk android:minSdkVersion="11" android:targetSdkVersion="13"/>
+    <uses-sdk android:minSdkVersion="14" android:targetSdkVersion="18"/>
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <application
