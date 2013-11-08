@@ -17,6 +17,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import android.app.Activity;
@@ -592,7 +593,11 @@ public class MainActivity extends FragmentActivity {
 
     private class JpegCallback implements PictureCallback {
 
-        private DateFormat mDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+        private DateFormat mDateFormat;
+
+        public JpegCallback() {
+            mDateFormat = new SimpleDateFormat("yyyyMMddHHmmss", Locale.US);
+        }
 
         public void onPictureTaken(byte[] data, Camera camera) {
             String fileId = mDateFormat.format(new Date());
@@ -986,7 +991,8 @@ public class MainActivity extends FragmentActivity {
 
     private void addLink(NexecClient.Settings settings, String id, int n) {
         String dest = getOriginalFilePath(id);
-        String src = String.format("%s/%d.jpg", mProjectDirectory, n);
+        Locale locale = Locale.US;
+        String src = String.format(locale, "%s/%d.jpg", mProjectDirectory, n);
         settings.addLink(dest, src);
     }
 
