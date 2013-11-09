@@ -839,6 +839,25 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
+    private class MenuActions {
+
+        private SparseArray<MenuAction> mActions;
+        private MenuAction mNopAction = new NopMenuAction();
+
+        public MenuActions() {
+            mActions = new SparseArray<MenuAction>();
+        }
+
+        public void put(int id, MenuAction action) {
+            mActions.put(id, action);
+        }
+
+        public MenuAction get(int id) {
+            MenuAction action = mActions.get(id);
+            return action != null ? action : mNopAction;
+        }
+    }
+
     //private static final String TAG = "animator";
 
     private static final int REQUEST_CONFIRM = 0;
@@ -863,7 +882,7 @@ public class MainActivity extends FragmentActivity {
     private PictureCallback mJpegCallback = new JpegCallback();
     private NexecClient mNexecClient;
     private ActivityResultDispatcher mActivityResultDispatcher;
-    private SparseArray<MenuAction> mMenuActions;
+    private MenuActions mMenuActions;
     private PrintWriter mLogFile;
     private FrameRateUpdater mFrameRateUpdater = new NopFrameRateUpdater();
     private CameraReader mCameraReader = new DefaultCameraReader();
@@ -931,7 +950,7 @@ public class MainActivity extends FragmentActivity {
                                       RESULT_OK,
                                       new OnProjectSettings());
 
-        mMenuActions = new SparseArray<MenuAction>();
+        mMenuActions = new MenuActions();
         mMenuActions.put(R.id.action_create_project, new CreateProjectAction());
         mMenuActions.put(R.id.action_rename_project, new RenameProjectAction());
         mMenuActions.put(R.id.action_clear_project, new ClearProjectAction());

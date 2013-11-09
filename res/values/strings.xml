@@ -8,6 +8,7 @@
     <string name="title_activity_project">Project Settings</string>
 
     <string name="action_make_movie">Make movie</string>
+    <string name="action_manage_projects">Manage projects</string>
     <string name="action_create_project">Create a new project</string>
     <string name="action_rename_project">Rename this project</string>
     <string name="action_clear_project">Clear this project</string>
