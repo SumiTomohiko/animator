@@ -139,6 +139,22 @@ public class FocusAreaView extends View {
         rect.top = (int)(areaY - HALF_SIZE);
         rect.right = (int)(areaX + HALF_SIZE);
         rect.bottom = (int)(areaY + HALF_SIZE);
+        if (rect.left < -1000) {
+            rect.left = -1000;
+            rect.right = rect.left + (int)AREA_SIZE;
+        }
+        else if (rect.top < -1000) {
+            rect.top = -1000;
+            rect.bottom = rect.top + (int)AREA_SIZE;
+        }
+        if (1000 < rect.right) {
+            rect.right = 1000;
+            rect.left = rect.right - (int)AREA_SIZE;
+        }
+        else if (1000 < rect.bottom) {
+            rect.bottom = 1000;
+            rect.top = rect.bottom - (int)AREA_SIZE;
+        }
 
         return newAreas(rect);
     }
