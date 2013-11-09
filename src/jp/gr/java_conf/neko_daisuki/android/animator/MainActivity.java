@@ -53,6 +53,7 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import jp.gr.java_conf.neko_daisuki.android.animator.widget.FocusAreaView;
 import jp.gr.java_conf.neko_daisuki.android.nexec.client.NexecClient;
@@ -575,6 +576,9 @@ public class MainActivity extends FragmentActivity {
             String service = Context.LAYOUT_INFLATER_SERVICE;
             LayoutInflater inflater = (LayoutInflater)getSystemService(service);
             View view = inflater.inflate(R.layout.list_item, parent, false);
+
+            TextView txt = (TextView)view.findViewById(R.id.position_text);
+            txt.setText(Integer.toString(position));
 
             ImageView img = (ImageView)view.findViewById(R.id.image);
             String path = getThumbnailFilePath(mFrames.get(position));
