@@ -125,10 +125,13 @@ public class FocusAreaView extends View {
     }
 
     private List<Camera.Area> computeFocusAreas(float x, float y) {
+        float surfaceX = x + getLeft() - mSurfaceView.getLeft();
+        float surfaceY = y + getTop() - mSurfaceView.getTop();
+
         final float VIEW_SIZE = 2000f;
         final float OFFSET = - VIEW_SIZE / 2;
-        float areaX = x / getWidth() * VIEW_SIZE + OFFSET;
-        float areaY = y / getHeight() * VIEW_SIZE + OFFSET;
+        float areaX = surfaceX / mSurfaceView.getWidth() * VIEW_SIZE + OFFSET;
+        float areaY = surfaceY / mSurfaceView.getHeight() * VIEW_SIZE + OFFSET;
 
         final float HALF_SIZE = AREA_SIZE / 2;
         Rect rect = new Rect();
