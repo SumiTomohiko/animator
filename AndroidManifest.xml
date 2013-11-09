@@ -21,16 +21,16 @@
         </activity>
         <activity
             android:name=".HostPreferenceActivity"
-            android:label="@string/title_activity_host_preference"/>
+            android:label="@string/title_activity_host_settings"/>
         <activity
             android:name=".LogActivity"
             android:label="@string/title_activity_log"/>
         <activity
             android:name=".CameraActivity"
-            android:label="@string/title_activity_camera"/>
+            android:label="@string/title_activity_camera_settings"/>
         <activity
             android:name=".ProjectActivity"
-            android:label="@string/title_activity_project"/>
+            android:label="@string/title_activity_project_settings"/>
         <activity
             android:name=".AboutActivity"
             android:label="@string/title_activity_about"/>

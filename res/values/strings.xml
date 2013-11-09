@@ -2,10 +2,10 @@
 <!DOCTYPE resources>
 <resources>
     <string name="app_name">animator</string>
-    <string name="title_activity_host_preference">Host Preference</string>
+    <string name="title_activity_host_settings">Host settings</string>
     <string name="title_activity_log">Log</string>
-    <string name="title_activity_camera">Camera Settings</string>
-    <string name="title_activity_project">Project Settings</string>
+    <string name="title_activity_camera_settings">Camera settings</string>
+    <string name="title_activity_project_settings">Project settings</string>
     <string name="title_activity_about">About</string>
 
     <string name="action_make_movie">Make movie</string>
