@@ -62,7 +62,7 @@ public class MainActivity extends FragmentActivity {
 
     public static class ClearProjectDialog extends DialogFragment {
 
-        private class OkeyButtonOnClickListener implements DialogInterface.OnClickListener {
+        private class OkayButtonOnClickListener implements DialogInterface.OnClickListener {
 
             public void onClick(DialogInterface dialog, int which) {
                 for (File file: new File(mDirectory).listFiles()) {
@@ -90,7 +90,7 @@ public class MainActivity extends FragmentActivity {
             Builder builder = new Builder(activity);
             mDirectory = getArguments().getString(KEY_DIRECTORY);
             builder.setMessage(R.string.dialog_clear_project);
-            builder.setPositiveButton("Okey", new OkeyButtonOnClickListener());
+            builder.setPositiveButton("Okay", new OkayButtonOnClickListener());
             builder.setNegativeButton("Cancel", null);
 
             return builder.create();
@@ -171,7 +171,7 @@ public class MainActivity extends FragmentActivity {
 
         private class OnShowListener implements DialogInterface.OnShowListener {
 
-            private class OkeyButtonOnClickListener implements OnClickListener {
+            private class OkayButtonOnClickListener implements OnClickListener {
 
                 public void onClick(View view) {
                     MainActivity activity = (MainActivity)getActivity();
@@ -179,7 +179,7 @@ public class MainActivity extends FragmentActivity {
                     if (name.equals("")) {
                         return;
                     }
-                    onOkey(activity, name);
+                    onOkay(activity, name);
                     mDialog.dismiss();
                 }
             }
@@ -192,7 +192,7 @@ public class MainActivity extends FragmentActivity {
 
             public void onShow(DialogInterface dialog) {
                 View button = mDialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                button.setOnClickListener(new OkeyButtonOnClickListener());
+                button.setOnClickListener(new OkayButtonOnClickListener());
             }
         }
 
@@ -210,7 +210,7 @@ public class MainActivity extends FragmentActivity {
             mNameEdit = (EditText)view.findViewById(R.id.name);
             mNameEdit.setText(getArguments().getString(KEY_NAME));
 
-            builder.setPositiveButton("Okey", null);
+            builder.setPositiveButton("Okay", null);
             builder.setNegativeButton("Cancel", null);
             AlertDialog d = builder.create();
             d.setOnShowListener(new OnShowListener(d));
@@ -218,7 +218,7 @@ public class MainActivity extends FragmentActivity {
             return d;
         }
 
-        protected abstract void onOkey(MainActivity activity, String name);
+        protected abstract void onOkay(MainActivity activity, String name);
     }
 
     public static class RenameProjectDialog extends ProjectNameDialog {
@@ -232,7 +232,7 @@ public class MainActivity extends FragmentActivity {
             return dialog;
         }
 
-        protected void onOkey(MainActivity activity, String name) {
+        protected void onOkay(MainActivity activity, String name) {
             String path = activity.getProjectDirectory(name);
             new File(activity.mProjectDirectory).renameTo(new File(path));
             activity.mProjectDirectory = path;
@@ -250,7 +250,7 @@ public class MainActivity extends FragmentActivity {
             return dialog;
         }
 
-        protected void onOkey(MainActivity activity, String name) {
+        protected void onOkay(MainActivity activity, String name) {
             activity.writeProject();
             activity.changeProject(name);
         }
