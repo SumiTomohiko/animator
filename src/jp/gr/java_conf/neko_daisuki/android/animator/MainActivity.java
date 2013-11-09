@@ -266,6 +266,13 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
+    private class AboutAction implements MenuAction {
+
+        public void run() {
+            startActivity(new Intent(MainActivity.this, AboutActivity.class));
+        }
+    }
+
     private class RenameProjectAction implements MenuAction {
 
         public void run() {
@@ -961,6 +968,7 @@ public class MainActivity extends FragmentActivity {
         mMenuActions.put(R.id.action_make_movie, new MakeMovieAction());
         mMenuActions.put(R.id.action_camera_settings,
                          new CameraSettingsAction());
+        mMenuActions.put(R.id.action_about, new AboutAction());
         mMenuActions.put(R.id.action_watch_log, new WatchLogAction());
         mMenuActions.put(R.id.action_watch_movie, new WatchMovieAction());
         mMenuActions.put(android.R.id.home, new NopMenuAction());
