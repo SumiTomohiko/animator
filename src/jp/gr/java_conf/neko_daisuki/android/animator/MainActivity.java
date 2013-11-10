@@ -658,7 +658,11 @@ public class MainActivity extends FragmentActivity {
     private class ShotButtonOnClickListener implements OnClickListener {
 
         public void onClick(View view) {
-            mShotButtonRunnable.run();
+            // People are saying that the internal buffer must be removed...
+            // http://stackoverflow.com/questions/7627921/android-camera-takepicture-does-not-return-some-times
+            // https://code.google.com/p/android/issues/detail?id=13966
+            mCamera.setPreviewCallback(null);
+            mCamera.takePicture(null, null, mJpegCallback);
         }
     }
 
@@ -823,33 +827,6 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
-    private class ShotRunnable implements Runnable {
-
-        public void run() {
-            // People are saying that the internal buffer must be removed...
-            // http://stackoverflow.com/questions/7627921/android-camera-takepicture-does-not-return-some-times
-            // https://code.google.com/p/android/issues/detail?id=13966
-            mCamera.setPreviewCallback(null);
-            mCamera.takePicture(null, null, mJpegCallback);
-        }
-    }
-
-    private class FocusAndShotRunnable implements Runnable {
-
-        private class Callback implements Camera.AutoFocusCallback {
-
-            public void onAutoFocus(boolean success, Camera camera) {
-                mShotRunnable.run();
-            }
-        }
-
-        private Camera.AutoFocusCallback mCallback = new Callback();
-
-        public void run() {
-            mCamera.autoFocus(mCallback);
-        }
-    }
-
     private class FocusAreaSettingsButtonListener implements View.OnClickListener {
 
         private class HideAreaProc implements Runnable {
@@ -923,9 +900,6 @@ public class MainActivity extends FragmentActivity {
     private PrintWriter mLogFile;
     private FrameRateUpdater mFrameRateUpdater = new NopFrameRateUpdater();
     private CameraReader mCameraReader = new DefaultCameraReader();
-    private Runnable mShotButtonRunnable;
-    private Runnable mShotRunnable = new ShotRunnable();
-    private Runnable mFocusAndShotRunnable = new FocusAndShotRunnable();
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -1443,8 +1417,6 @@ public class MainActivity extends FragmentActivity {
         mCameraParameters.updateTo(params);
         mCamera.setParameters(params);
         String focusMode = mCameraParameters.focusMode;
-        mShotButtonRunnable = focusMode.equals(Parameters.FOCUS_MODE_AUTO)
-                ? mFocusAndShotRunnable : mShotRunnable;
     }
 
     private void showFile(String path, String type) {
