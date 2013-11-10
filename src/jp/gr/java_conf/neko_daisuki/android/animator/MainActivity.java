@@ -53,6 +53,7 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import jp.gr.java_conf.neko_daisuki.android.animator.widget.FocusAreaView;
 import jp.gr.java_conf.neko_daisuki.android.nexec.client.NexecClient;
@@ -576,6 +577,9 @@ public class MainActivity extends FragmentActivity {
             LayoutInflater inflater = (LayoutInflater)getSystemService(service);
             View view = inflater.inflate(R.layout.list_item, parent, false);
 
+            TextView txt = (TextView)view.findViewById(R.id.position_text);
+            txt.setText(Integer.toString(position));
+
             ImageView img = (ImageView)view.findViewById(R.id.image);
             String path = getThumbnailFilePath(mFrames.get(position));
             img.setImageBitmap(BitmapFactory.decodeFile(path));
@@ -846,6 +850,31 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
+    private class FocusAreaSettingsButtonListener implements View.OnClickListener {
+
+        private class HideAreaProc implements Runnable {
+
+            public void run() {
+                mFocusAreaView.hideAreas();
+                mProc = new ShowAreaProc();
+            }
+        }
+
+        private class ShowAreaProc implements Runnable {
+
+            public void run() {
+                mFocusAreaView.showAreas();
+                mProc = new HideAreaProc();
+            }
+        }
+
+        private Runnable mProc = new HideAreaProc();
+
+        public void onClick(View view) {
+            mProc.run();
+        }
+    }
+
     private class MenuActions {
 
         private SparseArray<MenuAction> mActions;
@@ -880,6 +909,7 @@ public class MainActivity extends FragmentActivity {
     private int mPort = 57005;
 
     // View
+    private FocusAreaView mFocusAreaView;
     private SurfaceView mView;
     private Adapter mAdapter;
 
@@ -932,13 +962,17 @@ public class MainActivity extends FragmentActivity {
 
         View focusButton = findViewById(R.id.focus_button);
         focusButton.setOnClickListener(new FocusButtonListener());
+        int id = R.id.focus_area_settings_button;
+        View focusAreaSettingsButton = findViewById(id);
+        View.OnClickListener l = new FocusAreaSettingsButtonListener();
+        focusAreaSettingsButton.setOnClickListener(l);
 
         mView = (SurfaceView)findViewById(R.id.preview);
         mView.getHolder().addCallback(new SurfaceListener());
-        int id = R.id.focus_area_view;
-        FocusAreaView focusAreaView = (FocusAreaView)findViewById(id);
-        focusAreaView.setSurfaceView(mView);
-        focusAreaView.setOnAreaChangedListener(new FocusAreaListener());
+        id = R.id.focus_area_view;
+        mFocusAreaView = (FocusAreaView)findViewById(id);
+        mFocusAreaView.setSurfaceView(mView);
+        mFocusAreaView.setOnAreaChangedListener(new FocusAreaListener());
 
         mNexecClient = new NexecClient(this);
         OnGetLineListener outListener = new OnGetLineListener();

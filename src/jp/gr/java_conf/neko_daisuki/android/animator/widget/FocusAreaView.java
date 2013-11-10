@@ -36,6 +36,34 @@ public class FocusAreaView extends View {
         }
     }
 
+    private interface AreaDrawer {
+
+        public void draw(Canvas canvas);
+    }
+
+    private class TrueAreaDrawer implements AreaDrawer {
+
+        public void draw(Canvas canvas) {
+            Rect rect = mAreas.get(0).rect;
+            final float SIZE = 1000f;
+            int halfHeight = getHeight() / 2;
+            int halfWidth = getWidth() / 2;
+            float left = halfWidth + rect.left / SIZE * halfWidth;
+            float top = halfHeight + rect.top / SIZE * halfHeight;
+            float right = halfWidth + rect.right / SIZE * halfWidth;
+            float bottom = halfHeight + rect.bottom / SIZE * halfHeight;
+            canvas.drawRect(left, top, right, bottom, mOutlinePaint);
+            canvas.drawRect(left, top, right, bottom, mBorderPaint);
+        }
+    }
+
+    private class FalseAreaDrawer implements AreaDrawer {
+
+        public void draw(Canvas canvas) {
+            // Does nothing.
+        }
+    }
+
     private static final float AREA_SIZE = 100f;
 
     // documents
@@ -46,6 +74,7 @@ public class FocusAreaView extends View {
     private Paint mOutlinePaint = new Paint();
     // helpers
     private MotionEventDispatcher mDispatcher = new MotionEventDispatcher();
+    private AreaDrawer mAreaDrawer;
 
     public FocusAreaView(Context context) {
         super(context);
@@ -80,17 +109,18 @@ public class FocusAreaView extends View {
         invalidate();
     }
 
+    public void showAreas() {
+        mAreaDrawer = new TrueAreaDrawer();
+        invalidate();
+    }
+
+    public void hideAreas() {
+        mAreaDrawer = new FalseAreaDrawer();
+        invalidate();
+    }
+
     protected void onDraw(Canvas canvas) {
-        Rect rect = mAreas.get(0).rect;
-        final float SIZE = 1000f;
-        int halfHeight = getHeight() / 2;
-        int halfWidth = getWidth() / 2;
-        float left = halfWidth + rect.left / SIZE * halfWidth;
-        float top = halfHeight + rect.top / SIZE * halfHeight;
-        float right = halfWidth + rect.right / SIZE * halfWidth;
-        float bottom = halfHeight + rect.bottom / SIZE * halfHeight;
-        canvas.drawRect(left, top, right, bottom, mOutlinePaint);
-        canvas.drawRect(left, top, right, bottom, mBorderPaint);
+        mAreaDrawer.draw(canvas);
     }
 
     private List<Camera.Area> computeInitialAreas() {
@@ -116,6 +146,7 @@ public class FocusAreaView extends View {
         initializeAreas();
         mDispatcher.setUpProc(new MotionUpHandler());
         initializePaints();
+        showAreas();
     }
 
     private List<Camera.Area> newAreas(Rect rect) {

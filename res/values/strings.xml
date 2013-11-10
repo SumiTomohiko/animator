@@ -30,6 +30,8 @@
 
     <string name="shot">Shot</string>
     <string name="focus">Focus</string>
+    <string name="focus_area_settings">Focus area settings</string>
+
     <string name="version_title">Version</string>
     <string name="version_dummy">x.y.z</string>
     <string name="authors_website_title">Author\'s Website</string>

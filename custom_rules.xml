@@ -34,6 +34,7 @@
     <target name="icon">
         <svg2drawables name="ic_launcher"/>
         <svg2drawables name="ic_crosshairs"/>
+        <svg2drawables name="ic_crosshairs_settings"/>
         <svg2drawables name="ic_delete"/>
         <svg2drawables name="ic_magnify"/>
         <svg2drawables name="ic_right_arrow"/>
