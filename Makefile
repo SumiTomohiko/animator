@@ -20,6 +20,9 @@ clean:
 doc:
 	@cd doc && $(MAKE)
 
+doc-clean:
+	@cd doc && $(MAKE) clean
+
 prepare:
 	@mkdir -p $(SRCDIR)/nexec/client
 	@if [ ! -e $(PKG).animator ]; then				\

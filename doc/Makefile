@@ -14,7 +14,7 @@ all: index.html icon.png $(THUMBNAILS)
 	inkscape --export-png $@ $<
 
 clean:
-	rm -f *.html
+	rm -f *.html $(THUMBNAILS)
 
 icon.png: ../ic_launcher-web.png
 	convert -thumbnail 256x ../ic_launcher-web.png icon.png
