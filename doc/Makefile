@@ -1,7 +1,5 @@
 
-THUMBNAILS=	force_stop-thumb.png force_stop_dialog-thumb.png \
-		nexec_client-thumb.png running_services-thumb.png \
-		screenshot-thumb.png
+THUMBNAILS=	screenshot-thumb.png
 CONVERT=	convert -thumbnail 640x
 
 all: index.html icon.png $(THUMBNAILS)
