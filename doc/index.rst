@@ -24,12 +24,14 @@ Example movie
 
 One example movie made by this application has been uploaded to `YouTube`_.
 
-.. _YouTube: http://www.youtube.com/watch?v=b0Ogk506ELw
+.. _YouTube:
+    http://www.youtube.com/playlist?list=PLsm28L9E7zoOZgiWsvdJkCIN5v866N1J7
 
 Supported tablet
 ================
 
-I tested this application with Acer A500 (10inch tablet).
+I tested this application with ASUS MeMO Pad HD7 (Android 3.2.2 with 7inch
+screen).
 
 Google play
 ===========
