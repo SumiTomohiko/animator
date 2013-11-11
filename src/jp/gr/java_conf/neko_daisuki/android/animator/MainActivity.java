@@ -1416,7 +1416,6 @@ public class MainActivity extends FragmentActivity {
         Parameters params = mCamera.getParameters();
         mCameraParameters.updateTo(params);
         mCamera.setParameters(params);
-        String focusMode = mCameraParameters.focusMode;
     }
 
     private void showFile(String path, String type) {
