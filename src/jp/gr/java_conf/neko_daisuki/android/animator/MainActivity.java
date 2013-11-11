@@ -695,10 +695,21 @@ public class MainActivity extends FragmentActivity {
         }
 
         private Camera.Size findBestPreviewSize(int width, int height, List<Camera.Size> sizes) {
-            List<Camera.Size> candidates = dropTooLargePreviewSizes(width, height, sizes);
+            List<Camera.Size> aspectSizes = selectByAspectRatio(sizes);
+            List<Camera.Size> candidates = dropTooLargePreviewSizes(width, height, aspectSizes);
             return candidates.size() == 0
                 ? sizes.get(0)
                 : findLargestSize(candidates);
+        }
+
+        private List<Camera.Size> selectByAspectRatio(List<Camera.Size> sizes) {
+            List<Camera.Size> l = new LinkedList<Camera.Size>();
+            for (Camera.Size size: sizes) {
+                Camera.Size[] a = mAspectRatio.match(size.width, size.height)
+                        ? new Camera.Size[] { size } : new Camera.Size[0];
+                l.addAll(Arrays.asList(a));
+            }
+            return l;
         }
 
         private Camera.Size findLargestSize(List<Camera.Size> sizes) {
@@ -726,6 +737,29 @@ public class MainActivity extends FragmentActivity {
             }
 
             return l;
+        }
+    }
+
+    private static class AspectRatio {
+
+        public static final AspectRatio STANDARD = new AspectRatio(4, 3);
+
+        private int mWidth;
+        private int mHeight;
+
+        public AspectRatio(int width, int height) {
+            mWidth = width;
+            mHeight = height;
+        }
+
+        public boolean match(int width, int height) {
+            if (width % mWidth != 0) {
+                return false;
+            }
+            if (width / mWidth * mHeight != height) {
+                return false;
+            }
+            return true;
         }
     }
 
@@ -882,6 +916,7 @@ public class MainActivity extends FragmentActivity {
     private String mProjectDirectory;
     private List<String> mFrames = new ArrayList<String>();
     private FrameRate mFrameRate = new FrameRate(8);
+    private AspectRatio mAspectRatio = AspectRatio.STANDARD;
     private String mHost = "neko-daisuki.ddo.jp";
     private int mPort = 57005;
 
