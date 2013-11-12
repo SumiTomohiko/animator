@@ -7,9 +7,11 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.hardware.Camera;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import android.view.SurfaceView;
 import android.view.View;
 
 import jp.gr.java_conf.neko_daisuki.android.view.MotionEventDispatcher;
@@ -43,17 +45,62 @@ public class FocusAreaView extends View {
 
     private class TrueAreaDrawer implements AreaDrawer {
 
+        private class Size {
+
+            int width;
+            int height;
+        }
+
+        // Helper
+        private RectF mRect = new RectF();
+        private Size mSize = new Size();
+
         public void draw(Canvas canvas) {
+            Size size = getFrameSize();
             Rect rect = mAreas.get(0).rect;
+            RectF holderRect = computeRectInHolder(size, rect);
+            RectF surfaceRect = computeRectInSurface(size, holderRect);
+            RectF viewRect = computeRect(surfaceRect);
+            canvas.drawRect(viewRect, mOutlinePaint);
+            canvas.drawRect(viewRect, mBorderPaint);
+        }
+
+        private Size getFrameSize() {
+            Rect rect = mSurfaceView.getHolder().getSurfaceFrame();
+            mSize.width = rect.right - rect.left;
+            mSize.height = rect.bottom - rect.top;
+            return mSize;
+        }
+
+        private RectF computeRect(RectF rect) {
+            int deltaX = mSurfaceView.getLeft() - getLeft();
+            int deltaY = mSurfaceView.getTop() - getTop();
+            rect.left += deltaX;
+            rect.top += deltaY;
+            rect.right += deltaX;
+            rect.bottom += deltaY;
+            return rect;
+        }
+
+        private RectF computeRectInSurface(Size size, RectF rect) {
+            int deltaX = (mSurfaceView.getWidth() - size.width) / 2;
+            int deltaY = (mSurfaceView.getHeight() - size.height) / 2;
+            rect.left += deltaX;
+            rect.top += deltaY;
+            rect.right += deltaX;
+            rect.bottom += deltaY;
+            return rect;
+        }
+
+        private RectF computeRectInHolder(Size size, Rect rect) {
+            int halfWidth = size.width / 2;
+            int halfHeight = size.height / 2;
             final float SIZE = 1000f;
-            int halfHeight = getHeight() / 2;
-            int halfWidth = getWidth() / 2;
-            float left = halfWidth + rect.left / SIZE * halfWidth;
-            float top = halfHeight + rect.top / SIZE * halfHeight;
-            float right = halfWidth + rect.right / SIZE * halfWidth;
-            float bottom = halfHeight + rect.bottom / SIZE * halfHeight;
-            canvas.drawRect(left, top, right, bottom, mOutlinePaint);
-            canvas.drawRect(left, top, right, bottom, mBorderPaint);
+            mRect.left = halfWidth + rect.left / SIZE * halfWidth;
+            mRect.top = halfHeight + rect.top / SIZE * halfHeight;
+            mRect.right = halfWidth + rect.right / SIZE * halfWidth;
+            mRect.bottom = halfHeight + rect.bottom / SIZE * halfHeight;
+            return mRect;
         }
     }
 
@@ -67,7 +114,7 @@ public class FocusAreaView extends View {
     private static final float AREA_SIZE = 100f;
 
     // documents
-    private View mSurfaceView;
+    private SurfaceView mSurfaceView;
     private OnAreaChangedListener mListener;
     private List<Camera.Area> mAreas;
     private Paint mBorderPaint = new Paint();
@@ -91,7 +138,7 @@ public class FocusAreaView extends View {
         initialize();
     }
 
-    public void setSurfaceView(View surfaceView) {
+    public void setSurfaceView(SurfaceView surfaceView) {
         mSurfaceView = surfaceView;
     }
 
