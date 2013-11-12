@@ -134,7 +134,7 @@ public class MainActivity extends FragmentActivity {
     private class FocusButtonListener implements OnClickListener {
 
         public void onClick(View view) {
-            mCamera.autoFocus(null);
+            autoFocus();
         }
     }
 
@@ -144,7 +144,7 @@ public class MainActivity extends FragmentActivity {
             Parameters params = mCamera.getParameters();
             params.setFocusAreas(areas);
             mCamera.setParameters(params);
-            mCamera.autoFocus(null);
+            autoFocus();
         }
     }
 
@@ -657,12 +657,23 @@ public class MainActivity extends FragmentActivity {
 
     private class ShotButtonOnClickListener implements OnClickListener {
 
+        private class ShutterCallback implements Camera.ShutterCallback {
+
+            public void onShutter() {
+                enableCameraWidgets();
+            }
+        }
+
+        private Camera.ShutterCallback mShutterCallback = new ShutterCallback();
+
         public void onClick(View view) {
+            disableCameraWidgets();
+
             // People are saying that the internal buffer must be removed...
             // http://stackoverflow.com/questions/7627921/android-camera-takepicture-does-not-return-some-times
             // https://code.google.com/p/android/issues/detail?id=13966
             mCamera.setPreviewCallback(null);
-            mCamera.takePicture(null, null, mJpegCallback);
+            mCamera.takePicture(mShutterCallback, null, mJpegCallback);
         }
     }
 
@@ -905,6 +916,13 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
+    private class AutoFocusCallback implements Camera.AutoFocusCallback {
+
+        public void onAutoFocus(boolean success, Camera camera) {
+            enableCameraWidgets();
+        }
+    }
+
     //private static final String TAG = "animator";
 
     private static final int REQUEST_CONFIRM = 0;
@@ -923,12 +941,15 @@ public class MainActivity extends FragmentActivity {
     // View
     private FocusAreaView mFocusAreaView;
     private SurfaceView mView;
+    private View mShotButton;
+    private View mFocusButton;
     private Adapter mAdapter;
 
     // Helper
     private Camera mCamera;
     private CameraParameters mCameraParameters;
     private PictureCallback mJpegCallback = new JpegCallback();
+    private AutoFocusCallback mAutoFocusCallback = new AutoFocusCallback();
     private NexecClient mNexecClient;
     private ActivityResultDispatcher mActivityResultDispatcher;
     private MenuActions mMenuActions;
@@ -963,14 +984,14 @@ public class MainActivity extends FragmentActivity {
         setContentView(R.layout.activity_main);
         initializeApplicationDirectory();
 
-        View shotButton = findViewById(R.id.shot_button);
-        shotButton.setOnClickListener(new ShotButtonOnClickListener());
+        mShotButton = findViewById(R.id.shot_button);
+        mShotButton.setOnClickListener(new ShotButtonOnClickListener());
         AdapterView<Adapter> list = (AdapterView<Adapter>)findViewById(R.id.list);
         mAdapter = new Adapter();
         list.setAdapter(mAdapter);
 
-        View focusButton = findViewById(R.id.focus_button);
-        focusButton.setOnClickListener(new FocusButtonListener());
+        mFocusButton = findViewById(R.id.focus_button);
+        mFocusButton.setOnClickListener(new FocusButtonListener());
         int id = R.id.focus_area_settings_button;
         View focusAreaSettingsButton = findViewById(id);
         View.OnClickListener l = new FocusAreaSettingsButtonListener();
@@ -1458,6 +1479,24 @@ public class MainActivity extends FragmentActivity {
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         intent.setDataAndType(uri, type);
         startActivity(intent);
+    }
+
+    private void disableCameraWidgets() {
+        enableCameraWidgets(false);
+    }
+
+    private void enableCameraWidgets() {
+        enableCameraWidgets(true);
+    }
+
+    private void enableCameraWidgets(boolean enabled) {
+        mShotButton.setEnabled(enabled);
+        mFocusButton.setEnabled(enabled);
+    }
+
+    private void autoFocus() {
+        disableCameraWidgets();
+        mCamera.autoFocus(mAutoFocusCallback);
     }
 }
 
