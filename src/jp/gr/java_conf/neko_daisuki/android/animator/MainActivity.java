@@ -131,6 +131,40 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
+    private interface ProcAfterResume {
+
+        public void run();
+    }
+
+    public class NexecAfterResume implements ProcAfterResume {
+
+        private Intent mData;
+
+        public NexecAfterResume(Intent data) {
+            mData = data;
+        }
+
+        public void run() {
+            String path = getLogPath();
+            try {
+                mLogFile = new PrintWriter(path);
+            }
+            catch (FileNotFoundException e) {
+                String msg = String.format("cannot open log: %s", path);
+                ActivityUtil.showException(MainActivity.this, msg, e);
+                return;
+            }
+            ActivityUtil.showToast(MainActivity.this, "executing ffmpeg...");
+            mNexecClient.execute(mData);
+        }
+    }
+
+    public class NopAfterResume implements ProcAfterResume {
+
+        public void run() {
+        }
+    }
+
     private class FocusButtonListener implements OnClickListener {
 
         public void onClick(View view) {
@@ -512,17 +546,7 @@ public class MainActivity extends FragmentActivity {
     private class OnConfirmOk implements ActivityResultDispatcher.Proc {
 
         public void run(Intent data) {
-            String path = getLogPath();
-            try {
-                mLogFile = new PrintWriter(path);
-            }
-            catch (FileNotFoundException e) {
-                String msg = String.format("cannot open log: %s", path);
-                ActivityUtil.showException(MainActivity.this, msg, e);
-                return;
-            }
-            ActivityUtil.showToast(MainActivity.this, "executing ffmpeg...");
-            mNexecClient.execute(data);
+            mProcAfterResume = new NexecAfterResume(data);
         }
     }
 
@@ -946,6 +970,7 @@ public class MainActivity extends FragmentActivity {
     private Adapter mAdapter;
 
     // Helper
+    private ProcAfterResume mProcAfterResume = new NopAfterResume();
     private Camera mCamera;
     private CameraParameters mCameraParameters;
     private PictureCallback mJpegCallback = new JpegCallback();
@@ -1054,6 +1079,8 @@ public class MainActivity extends FragmentActivity {
         mCamera = Camera.open();
         mCameraReader.run();
         updateCameraParameters();
+
+        mProcAfterResume.run();
     }
 
     protected void onPause() {
